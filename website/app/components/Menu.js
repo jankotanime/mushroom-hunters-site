@@ -20,24 +20,6 @@ const Menu = () => {
 
   const tryLogin = async (e) => {
     return //TODO
-    e.preventDefault();
-    setError('');
-
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (res.ok) {
-        router.push('/dashboard');
-      } else {
-        const data = await res.json();
-        setError(data.error || 'Niepoprawne dane logowania.');
-      }
-    } catch (err) {
-      setError('Wystąpił błąd. Spróbuj ponownie później.');
-    }
   };
 
   return (

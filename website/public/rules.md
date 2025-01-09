@@ -1,0 +1,1 @@
+Zasady prywatności itd.
