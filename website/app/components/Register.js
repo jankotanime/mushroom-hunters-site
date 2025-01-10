@@ -23,21 +23,29 @@ const Register = () => {
   const tryRegister = async (e) => {
     e.preventDefault();
     setError('');
-    try {
-      const res = await fetch('http://localhost:8000/api/register-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(login),
-      });
-      if (res.ok) {
-        router.push('/');
-      } else {
-        const data = await res.json();
-        setError(data.error || 'Niepoprawne dane logowania.');
+    if (!login.email.includes('@')) {
+      setError('Błędny adres e-mail!')
+    } else if (login.password.length < 2) {
+      setError('Hasło powinno mieć przynajmniej 8 znaków!')
+    } else if (login.password !== login.secondPassword) {
+      setError('Wprowadzone hasła nie są takie same!')
+    } else {
+      try {
+        const res = await fetch('http://localhost:8000/api/register-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(login),
+        });
+        if (res.ok) {
+          router.push('/');
+        } else {
+          const data = await res.json();
+          setError(data.error || 'Niepoprawne dane logowania.');
+        }
+      } catch (err) {
+        console.log(err)
+        setError('Wystąpił błąd. Spróbuj ponownie później.');
       }
-    } catch (err) {
-      console.log(err)
-      setError('Wystąpił błąd. Spróbuj ponownie później.');
     }
   };
 
@@ -99,8 +107,8 @@ const Register = () => {
           onChange={() => {setCheckRules(!setCheckRules)}}
           required
         />
-        Wyrażam zgodę na <div onClick={() => router.push('/rules.md')}>regulamin</div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        Wyrażam zgodę na <a target="_blank" href="http://localhost:3000/rules.md">regulamin</a>
+        {error !== '' ? <p style={{ color: 'red' }}>{error}</p> : null}
         <button type="submit">Zarejerstruj się</button>
       </form>
       <button onClick={changeToLogin}>Powrót do logowania</button>

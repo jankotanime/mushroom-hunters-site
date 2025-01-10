@@ -19,7 +19,25 @@ const Menu = () => {
   }
 
   const tryLogin = async (e) => {
-    return //TODO
+    e.preventDefault();
+    setError('');
+    try {
+      const res = await fetch(`http://localhost:8000/api/finding-by-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(login),
+      });
+      if (res.ok) {
+        router.push('/');
+      } else {
+        const data = await res.json();
+        setError(data.error || 'Niepoprawne dane logowania.');
+      }
+    } catch (err) {
+      console.log(err)
+      setError('Wystąpił błąd. Spróbuj ponownie później.');
+    }
+    // return //TODO
   };
 
   return (
