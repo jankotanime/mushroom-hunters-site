@@ -41,7 +41,7 @@ const Register = () => {
           router.push('/');
         } else {
           const data = await res.json();
-          setError(data.error || 'Niepoprawne dane logowania.');
+          setError(data.error || 'Problem z rejerstracja po stronie serwera');
         }
       } catch (err) {
         console.log(err)

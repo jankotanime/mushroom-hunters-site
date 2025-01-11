@@ -1,6 +1,9 @@
 // ! TODO: Dodać bazę danych do projektu
 
+// ! Usunąć z folderu website bcrypt
+
 import express from 'express';
+import bcrypt from 'bcrypt';
 import pkg from 'pg';
 import cors from 'cors';
 import findingByLogin from './finding.js';
@@ -43,15 +46,17 @@ server.post('/api/register-user', async (req, res) => {
   try {
     const freeUserName = await isUserInDB(username)
     if (freeUserName === 0) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
       const result = await pool.query(
         'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
-        [username, email, password]
+        [username, email, hashedPassword]
       );
       res.status(201).json(result.rows[0]);
     } else if (freeUserName >= 0) {
       res.status(409).json({ error: 'nazwa zajeta' });
     } else {
-      res.status(500).json({ error: error.freeUserName });
+      res.status(500).json({ error: freeUserName.message });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -66,7 +71,8 @@ server.post('/api/login-user', async (req, res) => {
       [username]
     );
     if (result.rows[0]) {
-      if (result.rows[0].password === password) {
+      const matchPass = await bcrypt.compare(password, result.rows[0].password);
+      if (matchPass) {
         res.status(201).json(result.rows[0]);
       } else {
         res.status(401).json({ error: 'Błędne hasło' });
