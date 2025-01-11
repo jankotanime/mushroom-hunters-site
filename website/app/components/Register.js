@@ -32,7 +32,7 @@ const Register = () => {
       setError('Wprowadzone hasła nie są takie same!')
     } else {
       try {
-        const res = await fetch('http://localhost:8000/api/register-user', {
+        const res = await fetch('https://localhost:8000/api/register-user', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(login),

@@ -1,20 +1,30 @@
 // ! TODO: Dodać bazę danych do projektu
 
-// ! Usunąć z folderu website bcrypt
+// ! Aplikacja może nie działać przez dwa różne https. Najprawdopodobniej potrzebne jest wejście w przeglądarce
+// ! na stronę serwera api i website. Dodawanie certyfikatów do przęglądarki nie zawsze jest skuteczne
 
 import express from 'express';
 import bcrypt from 'bcrypt';
 import pkg from 'pg';
 import cors from 'cors';
 import findingByLogin from './finding.js';
+import https from 'https';
+import fs from 'fs';
 
 const { Pool } = pkg;
 
 const server = express();
 const port = 8000;
 
+const options = {
+  key: fs.readFileSync('./certs/server.key'), 
+  cert: fs.readFileSync('./certs/server.crt'),
+};
+
+const dataBaseURL = '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
+
 server.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://localhost:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true, // ? Na przyszłość do ciasteczek
 }));
@@ -23,7 +33,7 @@ server.use(express.json());
 
 const pool = new Pool({
   user: 'postgres',
-  host: 'localhost',
+  host: dataBaseURL,
   database: 'postgres',
   password: 'piwo',
   port: 5432,
@@ -43,6 +53,10 @@ const isUserInDB = async (user) => {
 
 server.post('/api/register-user', async (req, res) => {
   const { username, email, password } = req.body;
+  res.setHeader(
+    'Set-Cookie',
+    `aaaa=true; Max-Age=360000; Path=/;`
+  );
   try {
     const freeUserName = await isUserInDB(username)
     if (freeUserName === 0) {
@@ -73,6 +87,10 @@ server.post('/api/login-user', async (req, res) => {
     if (result.rows[0]) {
       const matchPass = await bcrypt.compare(password, result.rows[0].password);
       if (matchPass) {
+        res.setHeader(
+          'Set-Cookie',
+          `loggedIn=true; Max-Age=360000; Path=/; SameSite=None; Secure;`
+        );
         res.status(201).json(result.rows[0]);
       } else {
         res.status(401).json({ error: 'Błędne hasło' });
@@ -86,6 +104,6 @@ server.post('/api/login-user', async (req, res) => {
   }
 });
 
-server.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+https.createServer(options, server).listen(port, () => {
+  console.log(`Serwer działa na https://localhost:${port}`);
 });

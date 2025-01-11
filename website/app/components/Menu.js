@@ -22,9 +22,10 @@ const Menu = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch(`http://localhost:8000/api/login-user`, {
+      const res = await fetch(`https://localhost:8000/api/login-user`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'include',
         body: JSON.stringify(login),
       });
       if (res.ok) {
@@ -33,11 +34,10 @@ const Menu = () => {
         const data = await res.json();
         setError(data.error || 'Niepoprawne dane logowania.');
       }
-    } catch (err) {
-      console.log(err)
+    } catch (error) {
+      console.log(error)
       setError('Wystąpił błąd. Spróbuj ponownie później.');
     }
-    // return //TODO
   };
 
   return (
