@@ -22,7 +22,7 @@ const Menu = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch(`http://localhost:8000/api/finding-by-login`, {
+      const res = await fetch(`http://localhost:8000/api/login-user`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(login),

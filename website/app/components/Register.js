@@ -20,6 +20,7 @@ const Register = () => {
     router.push(url)
   }
 
+  // TODO: Poprawić walidację maila i hasła
   const tryRegister = async (e) => {
     e.preventDefault();
     setError('');
