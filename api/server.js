@@ -10,6 +10,7 @@ import cors from 'cors';
 import findingByLogin from './finding.js';
 import https from 'https';
 import fs from 'fs';
+import jwt from 'jsonwebtoken';
 
 const { Pool } = pkg;
 
@@ -62,10 +63,6 @@ server.post('/api/register-user', async (req, res) => {
         'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
         [username, email, hashedPassword]
       );
-      res.setHeader(
-        'Set-Cookie',
-        `loggedIn=true; Max-Age=360000; SameSite=Strict; Path=/; Secure; httpOnly`
-      );
       res.status(201).json(result.rows[0]);
     } else if (freeUserName >= 0) {
       res.status(409).json({ error: 'nazwa zajeta' });
@@ -76,6 +73,18 @@ server.post('/api/register-user', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+function generateAuthToken(username) {
+  const secretKey = process.env.JWT_SECRET || 'sektret Victorii'; // ? Może warto to na coś zmienić
+  const payload = {
+    login: username,
+  };
+  const options = {
+    expiresIn: '720h'
+  };
+  const token = jwt.sign(payload, secretKey, options);
+  return token;
+}
 
 server.post('/api/login-user', async (req, res) => {
   const { username, password } = req.body;
@@ -89,7 +98,8 @@ server.post('/api/login-user', async (req, res) => {
       if (matchPass) {
         res.setHeader(
           'Set-Cookie',
-          `loggedIn=true; Max-Age=360000; Path=/; SameSite=None; Secure;`
+          // ${generateAuthToken(result.rows[0].username)}
+          `loggedIn=${generateAuthToken(result.rows[0].username)}; Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`
         );
         res.status(201).json(result.rows[0]);
       } else {
@@ -103,6 +113,19 @@ server.post('/api/login-user', async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+server.post('/api/logout', async (req, res) => {
+  try {
+    res.setHeader(
+      'Set-Cookie',
+      `loggedIn=true; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`
+    );
+    res.status(200).json({ message: 'Wylogowano pomyślnie!' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 
 https.createServer(options, server).listen(port, () => {
   console.log(`Serwer działa na https://localhost:${port}`);
