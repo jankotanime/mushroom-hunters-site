@@ -53,10 +53,6 @@ const isUserInDB = async (user) => {
 
 server.post('/api/register-user', async (req, res) => {
   const { username, email, password } = req.body;
-  res.setHeader(
-    'Set-Cookie',
-    `aaaa=true; Max-Age=360000; Path=/;`
-  );
   try {
     const freeUserName = await isUserInDB(username)
     if (freeUserName === 0) {
@@ -65,6 +61,10 @@ server.post('/api/register-user', async (req, res) => {
       const result = await pool.query(
         'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
         [username, email, hashedPassword]
+      );
+      res.setHeader(
+        'Set-Cookie',
+        `loggedIn=true; Max-Age=360000; SameSite=Strict; Path=/; Secure; httpOnly`
       );
       res.status(201).json(result.rows[0]);
     } else if (freeUserName >= 0) {
