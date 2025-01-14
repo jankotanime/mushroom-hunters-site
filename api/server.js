@@ -22,7 +22,7 @@ const options = {
   cert: fs.readFileSync('./certs/server.crt'),
 };
 
-const dataBaseURL = '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
+const dataBaseURL = '192.168.0.13' // szkolny '10.10.4.153' domowy '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
 
 server.use(cors({
   origin: 'https://localhost:3000',
@@ -98,7 +98,6 @@ server.post('/api/login-user', async (req, res) => {
       if (matchPass) {
         res.setHeader(
           'Set-Cookie',
-          // ${generateAuthToken(result.rows[0].username)}
           `loggedIn=${generateAuthToken(result.rows[0].username)}; Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`
         );
         res.status(201).json(result.rows[0]);

@@ -26,3 +26,26 @@ footer {
   width: 100%;
   background-color: darkred;
 }
+
+.chat {
+  position: fixed;
+  width: 300px;
+  border-right: 2px solid yellow;
+  height: 100vh;
+  left: 0;
+  top: 50px;
+}
+
+.user-panel {
+  margin-left: 300px;
+  margin-top: 50px;
+}
+
+.user-panel-header {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  top: 0;
+  height: 50px;
+  border-bottom: 2px solid yellow;
+}
