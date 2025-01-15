@@ -6,11 +6,7 @@ import Main from './Main';
 
 
 const Menu = (props) => {
-  const [isLogged, setLogged] = useState(false)
-  const result = props.logCookie ? <Main /> : <Login />
- 
-
-  console.log()
+  const result = props.logCookie ? <Main logCookie = {props.logCookie}/> : <Login />
 
   return (result);
 };

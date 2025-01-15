@@ -22,7 +22,7 @@ const options = {
   cert: fs.readFileSync('./certs/server.crt'),
 };
 
-const dataBaseURL = '192.168.0.13' // szkolny '10.10.4.153' domowy '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
+const dataBaseURL = '10.231.25.216' //  domowy '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
 
 server.use(cors({
   origin: 'https://localhost:3000',
@@ -97,8 +97,10 @@ server.post('/api/login-user', async (req, res) => {
       const matchPass = await bcrypt.compare(password, result.rows[0].password);
       if (matchPass) {
         res.setHeader(
-          'Set-Cookie',
-          `loggedIn=${generateAuthToken(result.rows[0].username)}; Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`
+          'Set-Cookie', [
+            `loggedIn=${generateAuthToken(result.rows[0].username)}; Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`,
+            `user=${result.rows[0].username}; Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`
+          ]
         );
         res.status(201).json(result.rows[0]);
       } else {
@@ -117,14 +119,13 @@ server.post('/api/logout', async (req, res) => {
   try {
     res.setHeader(
       'Set-Cookie',
-      `loggedIn=true; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`
+      `loggedIn=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`
     );
     res.status(200).json({ message: 'Wylogowano pomyślnie!' });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
-
 
 https.createServer(options, server).listen(port, () => {
   console.log(`Serwer działa na https://localhost:${port}`);

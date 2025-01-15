@@ -25,6 +25,7 @@ footer {
   position: fixed;
   width: 100%;
   background-color: darkred;
+  height: 4vh;
 }
 
 .chat {
@@ -33,12 +34,12 @@ footer {
   border-right: 2px solid yellow;
   height: 100vh;
   left: 0;
-  top: 50px;
+  top: 8vh;
 }
 
 .user-panel {
   margin-left: 300px;
-  margin-top: 50px;
+  margin-top: 8vh;
 }
 
 .user-panel-header {
@@ -46,6 +47,39 @@ footer {
   width: 100%;
   left: 0;
   top: 0;
-  height: 50px;
+  height: 8vh;
   border-bottom: 2px solid yellow;
+}
+
+.other-user-message {
+  padding: 5px;
+  border: 1px solid pink;
+  border-radius: 5px;
+  margin: 5px;
+  width: 80%;
+}
+
+.user-message {
+  margin: 5px;
+  margin-left: 60px;
+  padding: 5px;
+  border: 1px solid pink;
+  border-radius: 5px;
+  width: 230px;
+}
+
+.global-chat-text-input {
+  width: 100%;
+  top: 100%;
+  height: 4vh;
+}
+
+.global-chat {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 84vh;
+}
+
+.global-chat::-webkit-scrollbar {
+  display: none;
 }
