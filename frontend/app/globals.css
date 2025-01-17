@@ -38,12 +38,35 @@ footer {
 }
 
 .private-chat {
+  background-color: aquamarine;
   position: fixed;
   width: 200px;
   border-right: 2px solid yellow;
   height: 10vh;
   left: 600px;
   top: 8vh;
+}
+
+.private-chat-one {
+  width: 250px;
+}
+
+.private-chats-container {
+  position: fixed;
+  width: 750px;
+  border: 2px solid yellowgreen;
+  height: 10vh;
+  left: 500px;
+  top: 55vh;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.private-chat-new {
+  margin: 10px;
+  border: 2px solid peru;
+  width: 250px;
+  background-color: aquamarine;
 }
 
 .user-panel {
@@ -81,6 +104,12 @@ footer {
   width: 100%;
   top: 100%;
   height: 4vh;
+}
+
+.private-chat-scroll {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 200px;
 }
 
 .global-chat {

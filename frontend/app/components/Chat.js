@@ -1,30 +1,25 @@
 'use client';
 import "./../globals.css";
-import { io } from 'socket.io-client'
-// const io = require('socket.io-client')
 import { useEffect, useState } from "react";
 
 const Chat = (props) => {
-  const socket = io('http://localhost:3001',{
-   transports: ['websocket', 'polling'], 
-    withCredentials: true});
   const [message, setMessage] = useState('');
   const [allMessages, setAllMessages] = useState([]);
   const [sendingMsg, setSendingMsg] = useState(false);
 
   useEffect(() => {
-    socket.emit("join_room_global", props.user);
-    socket.on("message_global", (user, msg) => {
+    props.socket.emit("join_room_global", props.user);
+    props.socket.on("message_global", (user, msg) => {
       setAllMessages((prevMessages) => [...prevMessages, {user: user, msg: msg}])
     });
     return () => {
-      socket.disconnect();
+      props.socket.disconnect();
     };
   }, []);
   
   const sendMessage = () => {
     setSendingMsg(true)
-    socket.emit("send_message_global", { user: props.user, message: message })
+    props.socket.emit("send_message_global", { user: props.user, message: message })
     setMessage('')
     setTimeout(() => {
       setSendingMsg(false)
