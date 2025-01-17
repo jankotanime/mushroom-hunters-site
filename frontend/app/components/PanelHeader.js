@@ -10,8 +10,7 @@ const PanelHeader = (props) => {
   const logOut = async () => {
     try {
       const res = await fetch(`https://localhost:8000/api/logout`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        method: 'DELETE',
         credentials: 'include',
       });
       if (res.ok) {

@@ -5,16 +5,17 @@ import { useEffect, useState } from "react";
 
 const PrivateChat = (props) => {
   const socket = io('http://localhost:3001',{
-   transports: ['websocket', 'polling'], 
+    transports: ['websocket', 'polling'], 
     withCredentials: true});
   const [message, setMessage] = useState('');
   const [allMessages, setAllMessages] = useState([]);
   const [sendingMsg, setSendingMsg] = useState(false);
 
   useEffect(() => {
+    console.log(allMessages)
+    setAllMessages([])
     socket.emit("join_room_private", props.user, props.roommate);
     socket.on("message_private", (user, msg) => {
-      console.log(msg)
       setAllMessages((prevMessages) => [...prevMessages, {user: user, msg: msg}])
     });
     return () => {

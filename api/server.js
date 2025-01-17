@@ -22,7 +22,7 @@ const options = {
   cert: fs.readFileSync('./certs/server.crt'),
 };
 
-const dataBaseURL = '10.231.25.216' //  domowy '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
+const dataBaseURL = '10.10.4.176' // '10.231.25.216' domowy '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
 
 server.use(cors({
   origin: 'https://localhost:3000',
@@ -115,11 +115,13 @@ server.post('/api/login-user', async (req, res) => {
   }
 });
 
-server.post('/api/logout', async (req, res) => {
+server.delete('/api/logout', async (req, res) => {
   try {
     res.setHeader(
-      'Set-Cookie',
-      `loggedIn=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`
+      'Set-Cookie', [
+        `loggedIn=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`,
+        `user=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`
+      ]
     );
     res.status(200).json({ message: 'Wylogowano pomyślnie!' });
   } catch (error) {
