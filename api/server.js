@@ -22,7 +22,7 @@ const options = {
   cert: fs.readFileSync('./certs/server.crt'),
 };
 
-const dataBaseURL = '10.10.4.176' // '10.231.25.216' domowy '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
+const dataBaseURL = '192.168.0.13' // '10.231.25.216' domowy '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
 
 server.use(cors({
   origin: 'https://localhost:3000',
@@ -128,6 +128,19 @@ server.delete('/api/logout', async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+server.get('/api/all-users', async (req, res) => {
+  const pattern = `%${req.query.pattern}%`;
+  try {
+    const result = await pool.query(
+      "SELECT username FROM users WHERE username LIKE $1",
+      [pattern]
+    );
+    res.status(201).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
 
 https.createServer(options, server).listen(port, () => {
   console.log(`Serwer działa na https://localhost:${port}`);

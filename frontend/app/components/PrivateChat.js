@@ -10,7 +10,6 @@ const PrivateChat = (props) => {
   
   useEffect(() => {
     setAllMessages([])
-    console.log(props)
     usedEffect ? null : props.socket.emit("join_room_private", props.user, props.roommate);
     usedEffect = true
     props.socket.on("message_private", (user, msg) => {
