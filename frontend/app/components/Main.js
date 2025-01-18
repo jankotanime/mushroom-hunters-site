@@ -38,6 +38,7 @@ const Main = (props) => {
         params.get('search') ? <Search pattern = {params.get('search')} /> : 
         params.get('friend-requests') ? <FriendRequests user = {props.user} /> :
         params.get('friends') ? <Friends user = {props.user} /> : null}
+        {/* <Post /> */}
         <FriendsToChat user = {props.user} var = {privateChats} fun = {addPrivateChat}/>
         <div className='private-chats-container'>
         {privateChats.map((chatWith, id) => {

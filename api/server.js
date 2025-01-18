@@ -11,6 +11,7 @@ import findingByLogin from './finding.js';
 import https from 'https';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
+import mqtt from 'mqtt';
 
 const { Pool } = pkg;
 
