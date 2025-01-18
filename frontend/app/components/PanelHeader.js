@@ -46,10 +46,15 @@ const PanelHeader = (props) => {
     router.push(`?friend-requests=true`)
   }
 
+  const goToFriends = () => {
+    router.push(`?friends=true`)
+  }
+
   const result = (<div className="user-panel-header">
     <div onClick={goToMain}>Main site</div>
     <div onClick={goToMyProfile}>Profil</div>
     <div onClick={goToFriendRequests}>Friend requests</div>
+    <div onClick={goToFriends}>Friends</div>
     <input
       type="text"
       id="search"
@@ -61,7 +66,6 @@ const PanelHeader = (props) => {
     />
     <div>Powiadomienia</div>
     <h2 onClick = {logOut}>Wyloguj</h2>
-    To jest header
   </div>)
   return (result);
 };

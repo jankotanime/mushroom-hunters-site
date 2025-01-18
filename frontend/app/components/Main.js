@@ -9,6 +9,8 @@ import { io } from 'socket.io-client';
 import Profile from './Profile';
 import Search from './Search';
 import FriendRequests from './FreindRequests';
+import Friends from './Friends';
+import FriendsToChat from './FriendsToChat';
 
 
 const Main = (props) => {
@@ -32,13 +34,11 @@ const Main = (props) => {
       <Chat user = {props.user} socket = {socket}/>
       <PanelHeader user = {props.user} />
       <div className='user-panel'>
-        <h1>Main Menu</h1>
         {params.get('profile') ? <Profile profile={params.get('profile')} user = {props.user} /> :
         params.get('search') ? <Search pattern = {params.get('search')} /> : 
-        params.get('friend-requests') ? <FriendRequests user = {props.user} /> : null}
-        <div onClick={() => privateChats.includes('aa') ? null : addPrivateChat('aa')}>aa</div>
-        <div onClick={() => privateChats.includes('test') ? null : addPrivateChat('test')}>test</div>
-        <div onClick={() => privateChats.includes('misio') ? null : addPrivateChat('misio')}>misio</div>
+        params.get('friend-requests') ? <FriendRequests user = {props.user} /> :
+        params.get('friends') ? <Friends user = {props.user} /> : null}
+        <FriendsToChat user = {props.user} var = {privateChats} fun = {addPrivateChat}/>
         <div className='private-chats-container'>
         {privateChats.map((chatWith, id) => {
           return (<div 

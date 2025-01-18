@@ -26,7 +26,7 @@ const FriendRequests = (props) => {
     }
 
     fetchData()
-  }, [props.user])
+  }, [])
 
   const acceptFriendRequest = async (user) => {
     try {
@@ -38,7 +38,7 @@ const FriendRequests = (props) => {
       });
       if (res.ok) {
         console.log(res.json())
-        router.push('/');
+        router.push('/?friend-requests=true');
       } else {
         const data = await res.json();
         console.log(data.error)

@@ -3,9 +3,9 @@ import { useRouter } from "next/navigation";
 import "./../globals.css";
 import { useEffect, useState } from "react";
 
-const Friends = (props) => {
-  const router = useRouter()
+const FriendsToChat = (props) => {
   const [friends, setFriends] = useState([])
+  const [friendsFilter, setFriendsFilter] = useState('')
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -17,9 +17,6 @@ const Friends = (props) => {
         if (res.ok) {
           const data = await res.json();
           setFriends(data)
-          console.log('ok')
-        } else {
-          console.log('nie ok')
         }
       } catch (error) {
         console.log(error)
@@ -28,12 +25,21 @@ const Friends = (props) => {
 
     fetchData()
   }, [props.user])
-  console.log(friends)
-  const result = (<div>{friends.map((user, id) => {
-    console.log(user)
-    return (<div key={id}>{user.username}</div>)
+  const result = (<div className="friends-to-chat">
+    <input
+      type="text"
+      id="search"
+      name="search"
+      value={friendsFilter}
+      onChange={(e) => {setFriendsFilter(e.target['value'])}}
+      placeholder="Wyszukaj..."
+      />
+    {friends.map((user, id) => {
+      if (user.username.includes(friendsFilter)) {
+        return (<div key={id} onClick={() => props.var.includes(user.username) ? null : props.fun(user.username)}>{user.username}</div>)
+      }
   })}</div>)
   return (result);
 };
 
-export default Friends;
+export default FriendsToChat;

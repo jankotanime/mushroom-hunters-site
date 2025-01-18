@@ -171,6 +171,23 @@ server.get('/api/all-users', async (req, res) => {
   }
 })
 
+server.get('/api/all-friends', async (req, res) => {
+  const user = req.query.user
+  try {
+    const result = await pool.query(
+      `SELECT u.username FROM users u JOIN friendships f
+      ON (u.id_user = f.id_user OR u.id_user = f.id_friend)
+      WHERE (f.id_user = (SELECT id_user FROM users WHERE username = $1)
+      OR f.id_friend = (SELECT id_user FROM users WHERE username = $1))
+      AND f.status = 'friends' AND u.username != $1`,
+      [user]
+    );
+    res.status(201).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
 server.get('/api/friend-requests', async (req, res) => {
   try {
     const result = await getAllFriendRequests(req.query.user)
