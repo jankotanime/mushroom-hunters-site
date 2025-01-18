@@ -81,6 +81,9 @@ footer {
   top: 0;
   height: 8vh;
   border-bottom: 2px solid yellow;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .other-user-message {

@@ -1,9 +1,10 @@
 'use client';
 import "./../globals.css";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Search = (props) => {    
-
+  const router = useRouter();
   const [allUsers, setAllUsers] = useState([])
 
   useEffect(() => {
@@ -29,9 +30,13 @@ const Search = (props) => {
     fetchData()
   }, [props.pattern])
 
+  const goToProfile = (username) => {
+    router.push(`?profile=${username}`)
+  }
+
   const result = (<div>
     {allUsers.map((user, id) => {
-      return (<div key={id}>{user.username}</div>)
+      return (<div key={id} onClick={() => goToProfile(user.username)}>{user.username}</div>)
     })}
   </div>)
   return (result);

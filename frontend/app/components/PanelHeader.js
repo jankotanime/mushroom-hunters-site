@@ -6,6 +6,17 @@ import "./../globals.css";
 
 const PanelHeader = (props) => {
   const router = useRouter();
+  const [searchText, setSearchText] = useState('');
+  const [checkNotifications, setCheckNotifications] = useState(false);
+
+  const searchBarChange = (e) => {
+    setSearchText(e.target['value'])
+  };
+
+  const searchBarEnter = () => {
+    router.push(`?search=${searchText}`)
+    setSearchText('')
+  }
 
   const logOut = async () => {
     try {
@@ -23,7 +34,27 @@ const PanelHeader = (props) => {
     }
   };
 
+  const goToMain = () => {
+    router.push(`/`)
+  }
+
+  const goToMyProfile = () => {
+    router.push(`?profile=${props.user}`)
+  }
+
   const result = (<div className="user-panel-header">
+    <div onClick={goToMain}>Main site</div>
+    <div onClick={goToMyProfile}>Profil</div>
+    <input
+      type="text"
+      id="search"
+      name="search"
+      value={searchText}
+      onKeyDown={(e) => {e.key === "Enter" ? searchBarEnter() : null}} //&& searchText !== ''
+      onChange={searchBarChange}
+      placeholder="Wyszukaj..."
+    />
+    <div>Powiadomienia</div>
     <h2 onClick = {logOut}>Wyloguj</h2>
     To jest header
   </div>)

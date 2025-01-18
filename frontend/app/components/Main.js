@@ -29,16 +29,21 @@ const Main = (props) => {
   return (
     <div>
       <Chat user = {props.user} socket = {socket}/>
-      <PanelHeader />
+      <PanelHeader user = {props.user} />
       <div className='user-panel'>
         <h1>Main Menu</h1>
-        {params.get('profile') === 'true' ? <Profile /> : params.get('search') ? <Search pattern = {params.get('search')} /> : null}
+        {params.get('profile') ? <Profile profile={params.get('profile')} user = {props.user} /> :
+        params.get('search') ? <Search pattern = {params.get('search')} /> : null}
         <div onClick={() => privateChats.includes('aa') ? null : addPrivateChat('aa')}>aa</div>
         <div onClick={() => privateChats.includes('test') ? null : addPrivateChat('test')}>test</div>
         <div onClick={() => privateChats.includes('misio') ? null : addPrivateChat('misio')}>misio</div>
         <div className='private-chats-container'>
         {privateChats.map((chatWith, id) => {
-          return (<div className='private-chat-one' key={id}><PrivateChat user = {props.user} roommate = {chatWith} id = {id} socket = {socket}/></div>)
+          return (<div 
+            className='private-chat-one' 
+            key={id}>
+              <PrivateChat user = {props.user} roommate = {chatWith} id = {id} socket = {socket}/>
+            </div>)
         })}
         </div>
       </div>
