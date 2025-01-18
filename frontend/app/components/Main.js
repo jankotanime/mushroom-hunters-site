@@ -8,6 +8,7 @@ import PrivateChat from './PrivateChat';
 import { io } from 'socket.io-client';
 import Profile from './Profile';
 import Search from './Search';
+import FriendRequests from './FreindRequests';
 
 
 const Main = (props) => {
@@ -33,7 +34,8 @@ const Main = (props) => {
       <div className='user-panel'>
         <h1>Main Menu</h1>
         {params.get('profile') ? <Profile profile={params.get('profile')} user = {props.user} /> :
-        params.get('search') ? <Search pattern = {params.get('search')} /> : null}
+        params.get('search') ? <Search pattern = {params.get('search')} /> : 
+        params.get('friend-requests') ? <FriendRequests user = {props.user} /> : null}
         <div onClick={() => privateChats.includes('aa') ? null : addPrivateChat('aa')}>aa</div>
         <div onClick={() => privateChats.includes('test') ? null : addPrivateChat('test')}>test</div>
         <div onClick={() => privateChats.includes('misio') ? null : addPrivateChat('misio')}>misio</div>

@@ -26,7 +26,7 @@ const dataBaseURL = '192.168.0.13' // '10.231.25.216' domowy '192.168.0.13' // ?
 
 server.use(cors({
   origin: 'https://localhost:3000',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true, // ? Na przyszłość do ciasteczek
 }));
 
@@ -50,6 +50,27 @@ const isUserInDB = async (user) => {
   } catch (error) {
     return error
   }
+}
+
+const getAllFriendRequests = async (user) => {
+  return pool.query(
+    `SELECT u.username FROM users u JOIN friendships f 
+    ON u.id_user = f.id_user
+    WHERE (f.id_friend = (SELECT id_user FROM users WHERE username = $1 AND status = 'waiting'))`,
+    [user])
+}
+
+const acceptFriendRequest = async (profile, user) => {
+  return pool.query(
+    `UPDATE friendships f
+    SET status = 'friends'
+    FROM users u1, users u2
+    WHERE f.id_user = u1.id_user
+    AND f.id_friend = u2.id_user
+    AND u1.username = $1
+    AND u2.username = $2`,
+    [profile, user]
+  )
 }
 
 server.post('/api/register-user', async (req, res) => {
@@ -109,9 +130,62 @@ server.post('/api/login-user', async (req, res) => {
     } else {
       res.status(401).json({ error: 'Błędny login' });
     }
-
+    
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+server.post('/api/add-friend', async (req, res) => {
+  const { user, profile } = req.body;
+  try {
+    let result = null
+    const allFriendsRequests = await getAllFriendRequests(user)
+    if (allFriendsRequests['rows'].includes(profile)) {
+      result = acceptFriendRequest(profile, user)
+    } else {
+      result = await pool.query(
+        `INSERT INTO friendships (id_user, id_friend) VALUES 
+        ((SELECT id_user FROM users WHERE username = $1),
+        (SELECT id_user FROM users WHERE username = $2)) 
+        RETURNING *`,
+        [user, profile]
+      );
+    }
+    res.status(201).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+server.get('/api/all-users', async (req, res) => {
+  const pattern = `%${req.query.pattern}%`;
+  try {
+    const result = await pool.query(
+      "SELECT username FROM users WHERE username LIKE $1",
+      [pattern]
+    );
+    res.status(201).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+server.get('/api/friend-requests', async (req, res) => {
+  try {
+    const result = await getAllFriendRequests(req.query.user)
+    res.status(201).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+server.patch('/api/accept-friend/:user', async (req, res) => {
+  try {
+    await acceptFriendRequest(req.body.user, req.params.user);
+    res.status(201).json({message: 'accepted'});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -129,18 +203,6 @@ server.delete('/api/logout', async (req, res) => {
   }
 });
 
-server.get('/api/all-users', async (req, res) => {
-  const pattern = `%${req.query.pattern}%`;
-  try {
-    const result = await pool.query(
-      "SELECT username FROM users WHERE username LIKE $1",
-      [pattern]
-    );
-    res.status(201).json(result.rows);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-})
 
 https.createServer(options, server).listen(port, () => {
   console.log(`Serwer działa na https://localhost:${port}`);

@@ -42,9 +42,14 @@ const PanelHeader = (props) => {
     router.push(`?profile=${props.user}`)
   }
 
+  const goToFriendRequests = () => {
+    router.push(`?friend-requests=true`)
+  }
+
   const result = (<div className="user-panel-header">
     <div onClick={goToMain}>Main site</div>
     <div onClick={goToMyProfile}>Profil</div>
+    <div onClick={goToFriendRequests}>Friend requests</div>
     <input
       type="text"
       id="search"
