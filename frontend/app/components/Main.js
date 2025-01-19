@@ -42,8 +42,8 @@ const Main = (props) => {
         {params.get('profile') ? <Profile profile={params.get('profile')} user = {props.user} /> :
         params.get('search') ? <Search pattern = {params.get('search')} /> : 
         params.get('friend-requests') ? <FriendRequests user = {props.user} /> :
-        params.get('friends') ? <Friends user = {props.user} /> : null}
-        <Dashboard user={props.user} socket = {mqqtSocket}/>
+        params.get('friends') ? <Friends user = {props.user} /> : 
+        <Dashboard user={props.user} socket = {mqqtSocket}/>}
         <FriendsToChat user = {props.user} var = {privateChats} fun = {addPrivateChat}/>
         <div className='private-chats-container'>
         {privateChats.map((chatWith, id) => {

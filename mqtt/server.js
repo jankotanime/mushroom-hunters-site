@@ -75,6 +75,20 @@ server.get('/mqtt/get-all-posts', async (req, res) => {
   }
 })
 
+server.get('/mqtt/get-user-posts', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT users.username, posts.content, posts.img FROM posts
+      JOIN users ON posts.id_user = users.id_user WHERE users.username = $1`,
+      [req.query.user]
+    );
+
+    res.status(201).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
 server.post('/mqtt/send-post', upload.single('image'), async (req, res) => {
   const user = req.body.user;
   const content = req.body.content;
