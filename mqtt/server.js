@@ -1,7 +1,5 @@
-// ! TODO: Dodać bazę danych do projektu
-// ! Aplikacja może nie działać przez dwa różne https. Najprawdopodobniej potrzebne jest wejście w przeglądarce
-// ! na stronę serwera api i website. Dodawanie certyfikatów do przęglądarki nie zawsze jest skuteczne
 // ! sudo systemctl restart mosquitto
+// ! mosquitto_pub -h localhost -t user -m 'content'
 
 import express from 'express';
 import pkg from 'pg';
@@ -46,9 +44,30 @@ const client = mqtt.connect('mqtt://localhost:1883');
 server.get('/mqtt/get-all-posts', async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT content FROM posts",
+      `SELECT users.username, posts.content FROM posts
+      JOIN users ON posts.id_user = users.id_user WHERE users.username != $1`,
+      [req.query.user]
     );
     res.status(201).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+server.post('/mqtt/send-post', async (req, res) => {
+  const {user, content} = req.body
+  try {
+    const result = await pool.query(
+      `INSERT INTO posts (id_user, content) SELECT id_user, $2
+      FROM users WHERE username = $1`,
+      [user, content]
+    );
+    if (result) {client.publish(user, content, (err) => {
+      if (err) {
+        console.error('Error', err);
+      }
+    })}
+    res.status(200).json(result.rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -73,7 +92,7 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
   addPostToDB(topic, message)
-  io.to(topic).emit("message", {user: topic, content: message.toString()});
+  io.to(topic).emit("message", {username: topic, content: message.toString()});
 });
 
 io.sockets.on("connection", (socket) => {

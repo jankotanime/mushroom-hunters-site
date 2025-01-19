@@ -23,6 +23,7 @@ const messageGlobalQueue = [];
 const messagePrivateQueue = [];
 const messageHistoryQueue = [];
 
+const messageGlobalHistory = [];
 const messagePrivateHistory = {};
 
 setInterval(() => {
@@ -54,15 +55,26 @@ setInterval(() => {
     }
 }, 1);
 
+function removeOldMessages() {
+    const currentTime = Date.now();
+    messageGlobalHistory.filter(msg => currentTime - msg.lifeTime <= 600000);
+  }
+  
+  setInterval(removeOldMessages, 30000);
+
 io.sockets.on("connection", (socket) => {
     // ? Socket chatu globalnego
     socket.on("join_room_global", (user) => {
         socket.userId = user;
         socket.join('global')
+        messageGlobalHistory.forEach(msg => {
+            io.to(socket.id).emit("message_global", msg.user, msg.message);
+        })
         console.log(`${user} dołączył do pokoju: global`)
     })
     socket.on("send_message_global", (data) => {
         console.log(`${data['user']}: ${data['message']}`)
+        messageGlobalHistory.push({user: data.user, message: data.message, lifeTime: Date.now()})
         messageGlobalQueue.push(data)
     })
 

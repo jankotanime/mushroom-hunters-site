@@ -120,7 +120,8 @@ server.post('/api/login-user', async (req, res) => {
       if (matchPass) {
         res.setHeader(
           'Set-Cookie', [
-            `loggedIn=${generateAuthToken(result.rows[0].username)}; Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`,
+            `loggedIn=${generateAuthToken(result.rows[0].username)}; 
+            Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`,
             `user=${result.rows[0].username}; Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`
           ]
         );
