@@ -11,11 +11,16 @@ import Search from './Search';
 import FriendRequests from './FreindRequests';
 import Friends from './Friends';
 import FriendsToChat from './FriendsToChat';
-
+import Dashboard from './Dashboard';
+import mqtt from 'mqtt';
 
 const Main = (props) => {
   const params = useSearchParams();
   const socket = io('https://localhost:3001',{
+    transports: ['websocket', 'polling'], 
+    withCredentials: true});
+
+  const mqqtSocket = io('https://localhost:8001',{
     transports: ['websocket', 'polling'], 
     withCredentials: true});
 
@@ -38,7 +43,7 @@ const Main = (props) => {
         params.get('search') ? <Search pattern = {params.get('search')} /> : 
         params.get('friend-requests') ? <FriendRequests user = {props.user} /> :
         params.get('friends') ? <Friends user = {props.user} /> : null}
-        {/* <Post /> */}
+        <Dashboard user={props.user} socket = {mqqtSocket}/>
         <FriendsToChat user = {props.user} var = {privateChats} fun = {addPrivateChat}/>
         <div className='private-chats-container'>
         {privateChats.map((chatWith, id) => {
