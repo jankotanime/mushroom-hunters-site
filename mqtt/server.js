@@ -8,6 +8,10 @@ import https from 'https';
 import fs from 'fs';
 import mqtt from 'mqtt';
 import { Server } from 'socket.io';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { stringify } from 'querystring';
 
 const { Pool } = pkg;
 const server = express();
@@ -18,6 +22,10 @@ server.use(cors({
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true, 
 }));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+server.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 const options = {
   key: fs.readFileSync('./certs/server.key'), 
   cert: fs.readFileSync('./certs/server.crt'),
@@ -39,60 +47,79 @@ const pool = new Pool({
   port: 5432,
 });
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
 const client = mqtt.connect('mqtt://localhost:1883');
+
 
 server.get('/mqtt/get-all-posts', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT users.username, posts.content FROM posts
+      `SELECT users.username, posts.content, posts.img FROM posts
       JOIN users ON posts.id_user = users.id_user WHERE users.username != $1`,
       [req.query.user]
     );
+
     res.status(201).json(result.rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 })
 
-server.post('/mqtt/send-post', async (req, res) => {
-  const {user, content} = req.body
+server.post('/mqtt/send-post', upload.single('image'), async (req, res) => {
+  const user = req.body.user;
+  const content = req.body.content;
+  const img = req.file || null;
   try {
+    let data = null 
+    if (img) {
+      data = {content: content, img: `/uploads/${img.filename}`}
+    } else {
+      data = {content: content, img: null}
+    }
+    client.publish(user, JSON.stringify(data))
     const result = await pool.query(
-      `INSERT INTO posts (id_user, content) SELECT id_user, $2
+      `INSERT INTO posts (id_user, content, img) SELECT id_user, $2, $3
       FROM users WHERE username = $1`,
-      [user, content]
+      [user, content, data.img]
     );
-    if (result) {client.publish(user, content, (err) => {
-      if (err) {
-        console.error('Error', err);
-      }
-    })}
     res.status(200).json(result.rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 })
 
-const addPostToDB = async (user, content) => {
-  try {
-    const result = await pool.query(
-      `INSERT INTO posts (id_user, content)
-      SELECT id_user, $2 FROM users
-      WHERE username = $1`, 
-      [user, content]);
-    result ? console.log('dodane na bd') : console.log('error') 
-  } catch (error) {
-    console.log(error)
-  }
-}
+// ? skad sie to tu wzielo xdddd
+// const addPostToDB = async (user, content) => {
+//   try {
+//     const result = await pool.query(
+//       `INSERT INTO posts (id_user, content)
+//       SELECT id_user, $2 FROM users
+//       WHERE username = $1`, 
+//       [user, content]);
+//     result ? console.log('dodane na bd') : console.log('error') 
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 
 client.on('connect', () => {
   console.log('Połączono z brokerem MQTT');
 });
 
 client.on('message', (topic, message) => {
-  addPostToDB(topic, message)
-  io.to(topic).emit("message", {username: topic, content: message.toString()});
+  console.log('aaaaa')
+  let receivedData = JSON.parse(message.toString());
+  io.to(topic).emit("message", {username: topic, content: receivedData.content, img: receivedData.img});
 });
 
 io.sockets.on("connection", (socket) => {
@@ -114,8 +141,6 @@ io.sockets.on("connection", (socket) => {
         console.log(`subskrypcja: ${friend.username}`);
       })
     });
-
-
   })
 })
 

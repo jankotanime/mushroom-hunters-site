@@ -21,3 +21,5 @@ app.prepare().then(() => {
     console.log('> Ready on https://localhost:3000');
   });
 });
+
+// ! dla działających zdjęć: export NODE_TLS_REJECT_UNAUTHORIZED=0

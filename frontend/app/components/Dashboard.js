@@ -16,11 +16,16 @@ const Dashboard = (props) => {
 
   const newPostTextEnter = async () => {
     try {
+      const formData = new FormData();
+      if (newPostImage) {
+        formData.append('image', newPostImage)
+      }
+      formData.append('user', props.user);
+      formData.append('content', newPostText);
       const res = await fetch(`https://localhost:8001/mqtt/send-post`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
         credentials: 'include',
-        body: JSON.stringify({user: props.user, content: newPostText})
+        body: formData
       });
       setNewPostText('')
       router.push(`/?profile=${props.user}`)
@@ -44,8 +49,9 @@ const Dashboard = (props) => {
           const data = await res.json();
           props.socket.emit("enter-dashboard", props.user, data);
           props.socket.on("message", (data) => {
-            const {username, content} = data
-            setPosts((prevPosts) => [{username: username, content: content}, ...prevPosts])
+            const {username, content, img} = data
+            setPosts((prevPosts) => [{username: username, content: content, img: img}, ...prevPosts])
+            console.log(posts)
           });
         } else {
           console.log('nie ok')
@@ -66,7 +72,6 @@ const Dashboard = (props) => {
         if (res.ok) {
           const data = await res.json();
           setPosts(data)
-          console.log(data)
           console.log('ok')
         } else {
           console.log('nie ok')
@@ -80,11 +85,7 @@ const Dashboard = (props) => {
   }, [])
 
   const addImage = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      const formData = new FormData();
-      setNewPostImage(formData.append('image', file))
-    }
+    setNewPostImage(e.target.files[0])
   };
 
   const result = (<div>
@@ -98,9 +99,11 @@ const Dashboard = (props) => {
     onChange={newPostTextChange}
     placeholder="O czym myślisz?"
   />
-    <Image src="/posts/grzybtest.jpeg" alt="Opis obrazu"width={500} height={300}/>
     {posts.map((post, id) => {
-    return (<div key={id}>{post.username}: {post.content}</div>)
+    return (<div key={id}>
+      {post.username}: {post.content}
+      {post.img ? <Image src={`https://localhost:8001${post.img}`} alt="Opis obrazu"width={500} height={300}/> : null}
+      </div>)
   })}</div>)
   return (result);
 };
