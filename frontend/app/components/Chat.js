@@ -42,14 +42,14 @@ const Chat = (props) => {
   </div>
   <input
     className="global-chat-text-input"
-        type="text"
-        id="message"
-        name="message"
-        value={message}
-        onKeyDown={(e) => {e.key === "Enter" && message !== '' && !sendingMsg ? sendMessage() : null}}
-        onChange={messageChange}
-        placeholder="Wyślij wiadomość..."
-      />
+    type="text"
+    id="message"
+    name="message"
+    value={message}
+    onKeyDown={(e) => {e.key === "Enter" && message !== '' && !sendingMsg ? sendMessage() : null}}
+    onChange={messageChange}
+    placeholder="Wyślij wiadomość..."
+  />
   </div>)
   return (result);
 };

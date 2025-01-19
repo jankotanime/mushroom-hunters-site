@@ -7,7 +7,7 @@ import OtherProfile from "./OtherProfile";
 const Profile = (props) => {
   const myProfile = props.user === props.profile
   const result = (<div>{myProfile ? <MyProfile user = {props.user}/> : 
-  <OtherProfile user = {props.user} profile = {props.profile}/>}
+  <OtherProfile friends = {props.friends} user = {props.user} profile = {props.profile}/>}
   </div>)
   return (result);
 };

@@ -53,8 +53,6 @@ const PanelHeader = (props) => {
   const result = (<div className="user-panel-header">
     <div onClick={goToMain}>Main site</div>
     <div onClick={goToMyProfile}>Profil</div>
-    <div onClick={goToFriendRequests}>Friend requests</div>
-    <div onClick={goToFriends}>Friends</div>
     <input
       type="text"
       id="search"
@@ -64,7 +62,8 @@ const PanelHeader = (props) => {
       onChange={searchBarChange}
       placeholder="Wyszukaj..."
     />
-    <div>Powiadomienia</div>
+    <div onClick={goToFriends}>Friends</div>
+    <div onClick={goToFriendRequests}>Friend requests</div>
     <h2 onClick = {logOut}>Wyloguj</h2>
   </div>)
   return (result);

@@ -38,7 +38,7 @@ const FriendRequests = (props) => {
       });
       if (res.ok) {
         console.log(res.json())
-        router.push('/?friend-requests=true');
+        window.location.reload();
       } else {
         const data = await res.json();
         console.log(data.error)

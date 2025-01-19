@@ -12,6 +12,7 @@ import https from 'https';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import mqtt from 'mqtt';
+import { profile } from 'console';
 
 const { Pool } = pkg;
 
@@ -120,8 +121,7 @@ server.post('/api/login-user', async (req, res) => {
       if (matchPass) {
         res.setHeader(
           'Set-Cookie', [
-            `loggedIn=${generateAuthToken(result.rows[0].username)}; 
-            Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`,
+            `loggedIn=${generateAuthToken(result.rows[0].username)}; Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`, 
             `user=${result.rows[0].username}; Max-Age=2592000; Path=/; SameSite=None; httpOnly; Secure;`
           ]
         );
@@ -222,6 +222,56 @@ server.delete('/api/logout', async (req, res) => {
   }
 });
 
+server.patch('/api/update/username', async (req, res) => {
+  try {
+    const {user, change} = req.body
+    console.log(user, change)
+    const result = await pool.query(
+      `UPDATE users
+      SET username = $2
+      WHERE username = $1`,
+      [user, change])
+    res.status(201).json({msg: 'ok'});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+server.patch('/api/update/email', async (req, res) => {
+  try {
+    const {user, change} = req.body
+    const result = await pool.query(
+      `UPDATE users
+      SET email = $2
+      WHERE username = $1`,
+      [user, change])
+    res.status(201).json({msg: 'ok'});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+server.delete('/api/delete-account', async (req, res) => {
+  try {
+    const {user, password} = req.body
+    const result = await pool.query(
+      'SELECT * FROM users WHERE username=$1',
+      [user]
+    );
+    const matchPass = await bcrypt.compare(password, result.rows[0].password);
+      if (matchPass) {
+        const result = await pool.query(
+          `DELETE FROM users
+          WHERE username = $1`,
+          [user])
+        res.status(201).json({msg: 'ok'});
+      } else {
+        res.status(401).json({error: 'Błędne hasło!'});
+      }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 https.createServer(options, server).listen(port, () => {
   console.log(`Serwer działa na https://localhost:${port}`);

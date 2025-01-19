@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 
 const OtherProfile = (props) => {
-  const router = useRouter()
+  const router = useRouter() 
   const addFriend = async () => {
     try {
       const res = await fetch(`https://localhost:8000/api/add-friend`, {
@@ -49,8 +49,7 @@ const OtherProfile = (props) => {
   
       getPosts()
     }, [])
-  
-    const result = (<div><div onClick={addFriend}>Dodaj do znajomych</div>
+    const result = (<div>{props.friends.length > 0 ? props.friends.some(friend => friend.username === props.profile) ?  null : <div onClick={addFriend}>Dodaj do znajomych</div> : <div onClick={addFriend}>Dodaj do znajomych</div>}
       {posts.map((post, id) => {
       return (<div key={id}>
             {post.username}: {post.content}

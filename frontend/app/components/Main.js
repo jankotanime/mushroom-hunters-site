@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Chat from './Chat';
 import PanelHeader from './PanelHeader';
@@ -25,6 +25,8 @@ const Main = (props) => {
     withCredentials: true});
 
   const [privateChats, setPrivateChats] = useState([])
+  const [friends, setFriends] = useState([])
+  const [friendsRequests, setFriendsRequests] = useState([])
 
   const addPrivateChat = (roommate) => {
     const newPrivateChat = privateChats
@@ -34,17 +36,49 @@ const Main = (props) => {
     setPrivateChats([...newPrivateChat, roommate])
   }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`https://localhost:8000/api/all-friends?user=${encodeURIComponent(props.user)}`, {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+          credentials: 'include',
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setFriends(data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+      try {
+        const res = await fetch(`https://localhost:8000/api/friend-requests?user=${encodeURIComponent(props.user)}`, {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+          credentials: 'include',
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setFriendsRequests(data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchData()
+  }, [props.user])
   return (
     <div>
       <Chat user = {props.user} socket = {socket}/>
       <PanelHeader user = {props.user} />
       <div className='user-panel'>
-        {params.get('profile') ? <Profile profile={params.get('profile')} user = {props.user} /> :
+        {params.get('profile') ? <Profile friends = {[...friends, ...friendsRequests]} profile={params.get('profile')} user = {props.user} /> :
         params.get('search') ? <Search pattern = {params.get('search')} /> : 
         params.get('friend-requests') ? <FriendRequests user = {props.user} /> :
         params.get('friends') ? <Friends user = {props.user} /> : 
         <Dashboard user={props.user} socket = {mqqtSocket}/>}
-        <FriendsToChat user = {props.user} var = {privateChats} fun = {addPrivateChat}/>
+        <FriendsToChat friends = {friends} user = {props.user} var = {privateChats} fun = {addPrivateChat}/>
         <div className='private-chats-container'>
         {privateChats.map((chatWith, id) => {
           return (<div 
