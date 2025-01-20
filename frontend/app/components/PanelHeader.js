@@ -7,7 +7,6 @@ import "./../globals.css";
 const PanelHeader = (props) => {
   const router = useRouter();
   const [searchText, setSearchText] = useState('');
-  const [checkNotifications, setCheckNotifications] = useState(false);
 
   const searchBarChange = (e) => {
     setSearchText(e.target['value'])
@@ -52,9 +51,10 @@ const PanelHeader = (props) => {
   }
 
   const result = (<div className="user-panel-header">
-    <div onClick={goToMain}>Main site</div>
-    <div onClick={goToMyProfile}>Profil</div>
+    <div className='user-panel-point' onClick={goToMain}>Main site</div>
+    <div className='user-panel-point' onClick={goToMyProfile}>Profil</div>
     <input
+      className='header-search'
       type="text"
       id="search"
       name="search"
@@ -63,9 +63,9 @@ const PanelHeader = (props) => {
       onChange={searchBarChange}
       placeholder="Wyszukaj..."
     />
-    <div onClick={goToFriends}>Friends</div>
-    <div onClick={goToFriendRequests}>Friend requests</div>
-    <h2 onClick = {logOut}>Wyloguj</h2>
+    <div className='user-panel-point' onClick={goToFriends}>Friends</div>
+    <div className='user-panel-point' onClick={goToFriendRequests}>Friend requests</div>
+    <div className='user-panel-point' onClick = {logOut}>Wyloguj</div>
   </div>)
   return (result);
 };

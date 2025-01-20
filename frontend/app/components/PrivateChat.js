@@ -33,7 +33,7 @@ const PrivateChat = (props) => {
     setMessage(e.target['value'])
   };
     
-  const result = (<div className="private-chat-new">
+  const result = (<div className="private-chat">
     {props.roommate}
   <div className="private-chat-scroll">{allMessages.map((elem, ind) => {
     const result = (<div 

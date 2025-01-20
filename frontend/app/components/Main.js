@@ -71,6 +71,7 @@ const Main = (props) => {
   return (
     <div>
       <Chat user = {props.user} socket = {socket}/>
+      <FriendsToChat friends = {friends} user = {props.user} var = {privateChats} fun = {addPrivateChat}/>
       <PanelHeader user = {props.user} />
       <div className='user-panel'>
         {params.get('profile') ? <Profile friends = {[...friends, ...friendsRequests]} profile={params.get('profile')} user = {props.user} /> :
@@ -78,12 +79,9 @@ const Main = (props) => {
         params.get('friend-requests') ? <FriendRequests user = {props.user} /> :
         params.get('friends') ? <Friends user = {props.user} /> : 
         <Dashboard user={props.user} socket = {mqqtSocket}/>}
-        <FriendsToChat friends = {friends} user = {props.user} var = {privateChats} fun = {addPrivateChat}/>
         <div className='private-chats-container'>
         {privateChats.map((chatWith, id) => {
-          return (<div 
-            className='private-chat-one' 
-            key={id}>
+          return (<div key={id}>
               <PrivateChat user = {props.user} roommate = {chatWith} id = {id} socket = {socket}/>
             </div>)
         })}

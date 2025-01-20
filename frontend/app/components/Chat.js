@@ -32,7 +32,7 @@ const Chat = (props) => {
     
   const result = (<div className="chat">
   <div className="global-chat">{allMessages.map((elem, ind) => {
-    const result = (<div 
+    const result = (<div
       key={ind}
       className={elem['user'] === props.user ? 'user-message' : 'other-user-message'}>
         {elem['user'] !== props.user ? `${elem['user']}: ` : null} {elem['msg']}
