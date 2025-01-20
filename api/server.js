@@ -13,6 +13,7 @@ import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import mqtt from 'mqtt';
 import { profile } from 'console';
+import cookieParser from 'cookie-parser';
 
 const { Pool } = pkg;
 
@@ -33,6 +34,7 @@ server.use(cors({
 }));
 
 server.use(express.json());
+server.use(cookieParser())
 
 const pool = new Pool({
   user: 'postgres',
@@ -109,6 +111,34 @@ function generateAuthToken(username) {
   return token;
 }
 
+const verifyAuthToken = (req, res, next) => {
+  const token = req.cookies.loggedIn;
+  const userCookie = req.cookies.user;
+  if (!token || !userCookie) {
+    res.setHeader(
+      'Set-Cookie', [
+        `loggedIn=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`,
+        `user=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`
+      ]
+    );
+    return res.status(403).json({ error: 'Problem z autoryzacją!' });
+  }
+  const secretKey = process.env.JWT_SECRET || 'sektret Victorii';
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err || decoded.login !== userCookie) {
+      res.setHeader(
+        'Set-Cookie', [
+          `loggedIn=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`,
+          `user=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`
+        ]
+      );
+      return res.status(403).json({ error: 'Problem z autoryzacją!' });
+    }
+    req.user = decoded;  
+    next();
+  });
+};
+
 server.post('/api/login-user', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -138,7 +168,7 @@ server.post('/api/login-user', async (req, res) => {
   }
 });
 
-server.post('/api/add-friend', async (req, res) => {
+server.post('/api/add-friend', verifyAuthToken, async (req, res) => {
   const { user, profile } = req.body;
   try {
     let result = null
@@ -160,7 +190,7 @@ server.post('/api/add-friend', async (req, res) => {
   }
 })
 
-server.delete('/api/delete-friend', async (req, res) => {
+server.delete('/api/delete-friend', verifyAuthToken, async (req, res) => {
   const { user, profile } = req.body;
   try {
     const result = await pool.query(
@@ -176,7 +206,7 @@ server.delete('/api/delete-friend', async (req, res) => {
   }
 })
 
-server.get('/api/all-users', async (req, res) => {
+server.get('/api/all-users', verifyAuthToken, async (req, res) => {
   const pattern = `%${req.query.pattern}%`;
   try {
     const result = await pool.query(
@@ -189,7 +219,7 @@ server.get('/api/all-users', async (req, res) => {
   }
 })
 
-server.get('/api/all-friends', async (req, res) => {
+server.get('/api/all-friends', verifyAuthToken, async (req, res) => {
   const user = req.query.user
   try {
     const result = await pool.query(
@@ -206,7 +236,7 @@ server.get('/api/all-friends', async (req, res) => {
   }
 })
 
-server.get('/api/friend-requests', async (req, res) => {
+server.get('/api/friend-requests', verifyAuthToken, async (req, res) => {
   try {
     const result = await getAllFriendRequests(req.query.user)
     res.status(201).json(result.rows);
@@ -215,7 +245,7 @@ server.get('/api/friend-requests', async (req, res) => {
   }
 })
 
-server.patch('/api/accept-friend/:user', async (req, res) => {
+server.patch('/api/accept-friend/:user', verifyAuthToken, async (req, res) => {
   try {
     await acceptFriendRequest(req.body.user, req.params.user);
     res.status(201).json({message: 'accepted'});
@@ -224,7 +254,7 @@ server.patch('/api/accept-friend/:user', async (req, res) => {
   }
 });
 
-server.delete('/api/logout', async (req, res) => {
+server.delete('/api/logout', verifyAuthToken, async (req, res) => {
   try {
     res.setHeader(
       'Set-Cookie', [
@@ -238,7 +268,7 @@ server.delete('/api/logout', async (req, res) => {
   }
 });
 
-server.patch('/api/update/username', async (req, res) => {
+server.patch('/api/update/username', verifyAuthToken, async (req, res) => {
   try {
     const {user, change} = req.body
     console.log(user, change)
@@ -253,7 +283,7 @@ server.patch('/api/update/username', async (req, res) => {
   }
 })
 
-server.patch('/api/update/email', async (req, res) => {
+server.patch('/api/update/email', verifyAuthToken, async (req, res) => {
   try {
     const {user, change} = req.body
     const result = await pool.query(
@@ -267,7 +297,7 @@ server.patch('/api/update/email', async (req, res) => {
   }
 })
 
-server.delete('/api/delete-account', async (req, res) => {
+server.delete('/api/delete-account', verifyAuthToken, async (req, res) => {
   try {
     const {user, password} = req.body
     const result = await pool.query(

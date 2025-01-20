@@ -9,6 +9,7 @@ const Dashboard = (props) => {
   const [posts, setPosts] = useState([])
   const [newPostText, setNewPostText] = useState('');
   const [newPostImage, setNewPostImage] = useState(null);
+  const [gotNewPost, setGotNewPost] = useState(false)
 
   const newPostTextChange = (e) => {
     setNewPostText(e.target['value'])
@@ -50,7 +51,13 @@ const Dashboard = (props) => {
           props.socket.emit("enter-dashboard", props.user, data);
           props.socket.on("message", (data) => {
             const {username, content, img} = data
-            setPosts((prevPosts) => [{username: username, content: content, img: img}, ...prevPosts])
+            if (!gotNewPost) {
+              setGotNewPost(true)
+              setPosts((prevPosts) => [{username: username, content: content, img: img}, ...prevPosts])
+              setTimeout(() => {
+                setGotNewPost(false)
+              }, 250)
+            }
             console.log(posts)
           });
         } else {

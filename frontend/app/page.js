@@ -9,6 +9,6 @@ export default async function Home() {
   const logCookie = cookiesStore.get("loggedIn") || null;
   const user = cookiesStore.get("user") || null;
   
-  const result = logCookie ? <Main user = {user['value']}/> : <Login />
+  const result = logCookie && user ? <Main user = {user['value']}/> : <Login />
   return (result);
 }

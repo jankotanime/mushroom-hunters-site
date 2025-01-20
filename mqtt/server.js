@@ -12,6 +12,8 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { stringify } from 'querystring';
+import cookieParser from 'cookie-parser';
+import jwt from 'jsonwebtoken';
 
 const { Pool } = pkg;
 const server = express();
@@ -25,6 +27,7 @@ server.use(cors({
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 server.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+server.use(cookieParser())
 
 const options = {
   key: fs.readFileSync('./certs/server.key'), 
@@ -60,8 +63,35 @@ const upload = multer({ storage: storage });
 
 const client = mqtt.connect('mqtt://localhost:1883');
 
+const verifyAuthToken = (req, res, next) => {
+  const token = req.cookies.loggedIn;
+  const userCookie = req.cookies.user;
+  if (!token || !userCookie) {
+    res.setHeader(
+      'Set-Cookie', [
+        `loggedIn=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`,
+        `user=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`
+      ]
+    );
+    return res.status(403).json({ error: 'Problem z autoryzacją!' });
+  }
+  const secretKey = process.env.JWT_SECRET || 'sektret Victorii';
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err || decoded.login !== userCookie) {
+      res.setHeader(
+        'Set-Cookie', [
+          `loggedIn=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`,
+          `user=false; Max-Age=0; Path=/; SameSite=None; httpOnly; Secure;`
+        ]
+      );
+      return res.status(403).json({ error: 'Problem z autoryzacją!' });
+    }
+    req.user = decoded;  
+    next();
+  });
+};
 
-server.get('/mqtt/get-all-posts', async (req, res) => {
+server.get('/mqtt/get-all-posts', verifyAuthToken, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT users.username, posts.content, posts.img FROM posts
@@ -75,7 +105,7 @@ server.get('/mqtt/get-all-posts', async (req, res) => {
   }
 })
 
-server.get('/mqtt/get-user-posts', async (req, res) => {
+server.get('/mqtt/get-user-posts', verifyAuthToken, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT posts.id_post, users.username, posts.content, posts.img FROM posts
@@ -89,7 +119,7 @@ server.get('/mqtt/get-user-posts', async (req, res) => {
   }
 })
 
-server.post('/mqtt/send-post', upload.single('image'), async (req, res) => {
+server.post('/mqtt/send-post', verifyAuthToken, upload.single('image'), async (req, res) => {
   const user = req.body.user;
   const content = req.body.content;
   const img = req.file || null;
@@ -112,7 +142,7 @@ server.post('/mqtt/send-post', upload.single('image'), async (req, res) => {
   }
 })
 
-server.delete('/mqtt/delete-post', async (req, res) => {
+server.delete('/mqtt/delete-post', verifyAuthToken, async (req, res) => {
   try{
     const id = req.body.id;
     const result = await pool.query(
@@ -130,7 +160,6 @@ client.on('connect', () => {
 });
 
 client.on('message', (topic, message) => {
-  console.log('aaaaa')
   let receivedData = JSON.parse(message.toString());
   io.to(topic).emit("message", {username: topic, content: receivedData.content, img: receivedData.img});
 });
