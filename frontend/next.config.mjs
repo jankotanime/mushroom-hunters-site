@@ -1,5 +1,12 @@
 export default {
   images: {
-    domains: ['localhost'], // Dodaj 'localhost' lub inne zaufane źródła
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+        port: '8001',
+        pathname: '/uploads/**',
+      },
+    ],
   },
 };

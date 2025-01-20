@@ -69,6 +69,7 @@ const OtherProfile = (props) => {
       getPosts()
     }, [])
     const result = (<div>
+      <div>{props.profile}</div>
       {props.friends.length > 0 ? 
       props.friends.some(friend => friend.username === props.profile) ? 
       <div onClick={deleteFriend}>Usuń ze znajomych</div> : 

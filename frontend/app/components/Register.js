@@ -51,22 +51,22 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h1>Register</h1>
-      <form onSubmit={tryRegister} autoComplete="on">
-        <label htmlFor="username">Login:</label>
+    <div className='login-container'>
+      <div className='login-title'>Rejerstracja</div>
+      <form className='login-form' onSubmit={tryRegister} autoComplete="on">
+          <input
+            className='login-input'
+            type="text"
+            id="username"
+            name="username"
+            value={login.username}
+            onChange={loginChange}
+            required
+            autoComplete="username"
+            placeholder="Wprowadź login"
+          />
         <input
-          type="text"
-          id="username"
-          name="username"
-          value={login.username}
-          onChange={loginChange}
-          required
-          autoComplete="username"
-          placeholder="Wprowadź login"
-        />
-        <label htmlFor="email">Email:</label>
-        <input
+          className='login-input'
           type="text"
           id="email"
           name="email"
@@ -76,8 +76,8 @@ const Register = () => {
           autoComplete="email"
           placeholder="Wprowadź email"
         />
-        <label htmlFor="password">Hasło:</label>
         <input
+          className='login-input'
           type={showPassword ? "text" : "password"}
           id="password"
           name="password"
@@ -88,8 +88,8 @@ const Register = () => {
           placeholder="Wprowadź hasło"
         />
         <button type="button" onClick={() => {setShowPassword(!showPassword)}}>Pokaz haslo</button>
-        <label htmlFor="secondPassword">Powtórz hasło:</label>
         <input
+          className='login-input'
           type={showSecondPassword ? "text" : "password"}
           id="secondPassword"
           name="secondPassword"
@@ -100,19 +100,21 @@ const Register = () => {
           placeholder="Wprowadź hasło ponownie"
         />
         <button type="button" onClick={() => {setShowSecondPassword(!showSecondPassword)}}>Pokaz haslo</button>
-        <input
-          type="checkbox"
-          id="rules"
-          name="rules"
-          value={login.checkRules}
-          onChange={() => {setCheckRules(!setCheckRules)}}
-          required
-        />
-        Wyrażam zgodę na <a target="_blank" href="http://localhost:3000/rules.md">regulamin</a>
-        {error !== '' ? <p style={{ color: 'red' }}>{error}</p> : null}
-        <button type="submit">Zarejerstruj się</button>
+        <div>
+          <input
+            type="checkbox"
+            id="rules"
+            name="rules"
+            value={login.checkRules}
+            onChange={() => {setCheckRules(!setCheckRules)}}
+            required
+            />
+          Wyrażam zgodę na <a target="_blank" className='important-point-login' href="http://localhost:3000/rules.md">regulamin</a>
+        </div>
+        {error !== '' ? <p className='error'>{error}</p> : null}
+        <button className='login-button' type="submit">Zarejerstruj się</button>
       </form>
-      <button onClick={changeToLogin}>Powrót do logowania</button>
+      <button className='important-point-login' onClick={changeToLogin}>Powrót do logowania</button>
     </div>
   );
 };

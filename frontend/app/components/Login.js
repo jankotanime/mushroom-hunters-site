@@ -43,11 +43,11 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h1>Main Menu</h1>
-      <form onSubmit={tryLogin} autoComplete="on">
-        <label htmlFor="username">Login:</label>
+    <div className='login-container'>
+      <div className='login-title'>Logowanie</div>
+      <form className='login-form' onSubmit={tryLogin} autoComplete="on">
         <input
+          className='login-input'
           type="text"
           id="username"
           name="username"
@@ -57,9 +57,8 @@ const Login = () => {
           autoComplete="username"
           placeholder="Wprowadź login"
         />
-
-        <label htmlFor="password">Hasło:</label>
         <input
+          className='login-input'
           type={showPassword ? "text" : "password"}
           id="password"
           name="password"
@@ -70,10 +69,10 @@ const Login = () => {
           placeholder="Wprowadź hasło"
         />
         <button type="button" onClick={() => {setShowPassword(!showPassword)}}>Pokaz haslo</button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Zaloguj</button>
+        {error && <p className='error'>{error}</p>}
+        <button className='login-button' type="submit">Zaloguj</button>
       </form>
-      <button onClick={changeToRegister}>Załóż konto</button>
+      <button className='important-point-login' onClick={changeToRegister}>Załóż konto</button>
     </div>
   );
 };

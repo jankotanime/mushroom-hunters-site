@@ -35,7 +35,8 @@ const PanelHeader = (props) => {
   };
 
   const goToMain = () => {
-    router.push(`/`)
+    console.log(router)
+    router.replace(`/`)
   }
 
   const goToMyProfile = () => {
