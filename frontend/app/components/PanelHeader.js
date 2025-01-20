@@ -51,7 +51,7 @@ const PanelHeader = (props) => {
   }
 
   const result = (<div className="user-panel-header">
-    <div className='user-panel-point' onClick={goToMain}>Main site</div>
+    <div className='user-panel-point' onClick={goToMain}>Strona główna</div>
     <div className='user-panel-point' onClick={goToMyProfile}>Profil</div>
     <input
       className='header-search'
@@ -63,8 +63,8 @@ const PanelHeader = (props) => {
       onChange={searchBarChange}
       placeholder="Wyszukaj..."
     />
-    <div className='user-panel-point' onClick={goToFriends}>Friends</div>
-    <div className='user-panel-point' onClick={goToFriendRequests}>Friend requests</div>
+    <div className='user-panel-point' onClick={goToFriends}>Znajomi</div>
+    <div className='user-panel-point' onClick={goToFriendRequests}>Zaproszenia</div>
     <div className='user-panel-point' onClick = {logOut}>Wyloguj</div>
   </div>)
   return (result);

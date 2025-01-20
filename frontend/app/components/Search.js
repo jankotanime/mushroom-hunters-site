@@ -34,9 +34,9 @@ const Search = (props) => {
     router.push(`?profile=${username}`)
   }
 
-  const result = (<div>
+  const result = (<div className="friends-container">
     {allUsers.map((user, id) => {
-      return (<div key={id} onClick={() => goToProfile(user.username)}>{user.username}</div>)
+      return (<div key={id} className='friend' onClick={() => goToProfile(user.username)}>{user.username}</div>)
     })}
   </div>)
   return (result);

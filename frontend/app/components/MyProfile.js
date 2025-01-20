@@ -13,7 +13,7 @@ const MyProfile = (props) => {
   const [editType, setEditType] = useState('username')
   const [deletingProfile, setDeletingProfile] = useState(false)
   const [error, setError] = useState(null)
-  const [sureToDelete, setSureToDelete] = useState(false)
+  const [sureToDelete, setSureToDelete] = useState(null)
 
   useEffect(() => {
     const getPosts = async () => {
@@ -79,9 +79,11 @@ const MyProfile = (props) => {
       }
     }
 
-    const result = (<div>
+    const result = (<div className="my-profile-options">
+      <div className="edit-profile-type">
       <div onClick={() => {setEditType('username'); setLogin('')}}>login</div>
       <div onClick={() => {setEditType('email'); setLogin('')}}>email</div>
+      </div>
       <input
         type="text"
         id="login"
@@ -90,7 +92,7 @@ const MyProfile = (props) => {
         onChange={(e) => loginChange(e)}
         onKeyDown={(e) => {e.key === "Enter" ? editProfileEnter() : null}}
       />
-      <div>Uwaga! Użytkownik zostanie wylogowany!</div>
+      <div className='info-about-logout'>Uwaga! Użytkownik zostanie wylogowany!</div>
     </div>)
     return result
   }
@@ -156,18 +158,31 @@ const MyProfile = (props) => {
   }
 
 
-  const result = (<div>{props.user}
-  <div onClick={() => {setEditingProfile(!editingProfile); setDeletingProfile(false)}}>Edytuj profil</div>
-  <div onClick={() => {setDeletingProfile(!deletingProfile); setEditingProfile(false)}}>Usuń konto</div>
-  {deletingProfile ? deleteProfile() : editingProfile ? editProfile() : null}
-  {error ? error : null}
-    {posts.map((post, id) => {
-    return (<div key={id}>
-      {sureToDelete ? <div onClick={() => deletePost(post.id_post)}>Sure?</div> : <div onClick={() => setSureToDelete(true)}>Delete post</div>}
-      {post.username}: {post.content}
-      {post.img ? <Image src={`https://localhost:8001${post.img}`} alt="Opis obrazu"width={500} height={300}/> : null}
+  const result = (<div className="profile">
+  <div className="my-profile-header">
+    <div className="my-profile-header-name">{props.user}</div>
+      <div className="my-profile-options">
+        <div className="edit-profile-type">
+          <div onClick={() => {setEditingProfile(!editingProfile); setDeletingProfile(false)}}>Edytuj profil</div>
+          <div onClick={() => {setDeletingProfile(!deletingProfile); setEditingProfile(false)}}>Usuń konto</div>
+        </div>
+        {deletingProfile ? deleteProfile() : editingProfile ? editProfile() : null}
+        {error ? <div className="error">{error}</div> : null}
+      </div>
+    </div>
+    <div className="posts-container">
+      {posts.map((post, id) => {
+      return (<div className='post' key={id}>
+        <div className="post-options">
+          <div className='post-user'>{post.username}</div>
+          <div className='post-content'>{post.content}</div>
+          {sureToDelete===id ? 
+          <div className="post-delete" onClick={() => deletePost(post.id_post)}>Jesteś pewien?</div> : 
+          <div className="post-delete" onClick={() => setSureToDelete(id)}>Usuń post</div>}
+        </div>
+        {post.img ? <Image src={`https://localhost:8001${post.img}`} alt="Opis obrazu" className="post-image" width={300} height={400}/> : null}
       </div>)
-  })}</div>)
+  })}</div></div>)
   return (result);
 };
 

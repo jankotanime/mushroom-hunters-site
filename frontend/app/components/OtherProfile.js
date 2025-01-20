@@ -68,19 +68,28 @@ const OtherProfile = (props) => {
   
       getPosts()
     }, [])
-    const result = (<div>
-      <div>{props.profile}</div>
+    const result = (<div className="profile">
+      <div className="my-profile-header">
+      <div className="my-profile-header-name">{props.profile}</div>
+      <div className="my-profile-options">
       {props.friends.length > 0 ? 
       props.friends.some(friend => friend.username === props.profile) ? 
       <div onClick={deleteFriend}>Usuń ze znajomych</div> : 
       <div onClick={addFriend}>Dodaj do znajomych</div> : 
       <div onClick={addFriend}>Dodaj do znajomych</div>}
+      </div>
+      </div>
+      <div className="posts-container">
       {posts.map((post, id) => {
-      return (<div key={id}>
-            {post.username}: {post.content}
-            {post.img ? <Image src={`https://localhost:8001${post.img}`} alt="Opis obrazu"width={500} height={300}/> : null}
+        return (<div className='post' key={id}>
+          <div className="post-options"> 
+            <div className='post-user'>{post.username}</div>
+            <div className='post-content'>{post.content}</div>
+          </div>
+            {post.img ? <Image className="post-image" src={`https://localhost:8001${post.img}`} alt="Opis obrazu"width={300} height={400}/> : null}
             </div>)
-    })}</div>)
+    })}</div>
+    </div>)
   return (result);
 };
 

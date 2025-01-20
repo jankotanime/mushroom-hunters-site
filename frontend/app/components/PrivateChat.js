@@ -32,19 +32,23 @@ const PrivateChat = (props) => {
   const messageChange = (e) => {
     setMessage(e.target['value'])
   };
-    
-  const result = (<div className="private-chat">
-    {props.roommate}
-  <div className="private-chat-scroll">{allMessages.map((elem, ind) => {
-    const result = (<div 
-      key={ind}
-      className={elem['user'] === props.user ? 'user-message' : 'other-user-message'}>
+  console.log(props)
+  const result = (
+  <div className="private-chat">
+    <div className="private-chat-header">
+      {props.roommate}
+      <div className="close-private-chat" onClick={() => props.setPrivateChats(props.privateChats.filter(chat => chat !== props.roommate))}>Zamknij</div>
+    </div>
+    <div className="private-chat-messages">{allMessages.map((elem, ind) => {
+      const result = (<div key={ind}
+        className={elem['user'] === props.user ? 'user-message' : 'other-user-message'}>
         {elem['user'] !== props.user ? `${elem['user']}: ` : null} {elem['msg']}
       </div>)
-    return result
-   })}
-  </div>
+      return result
+      })}
+    </div>
   <input
+    className="private-chat-input"
     type="text"
     id="message"
     name="message"

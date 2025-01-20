@@ -48,8 +48,8 @@ const FriendRequests = (props) => {
     }
   }
 
-  const result = (<div>{requests.map((user, id) => {
-    return (<div key={id}>{user.username}<div onClick={() => acceptFriendRequest(user.username)}>Akceptuj</div></div>)
+  const result = (<div className="friends-container">{requests.map((user, id) => {
+    return (<div className="friend" key={id}><div>{user.username}</div><div onClick={() => acceptFriendRequest(user.username)}>Akceptuj</div></div>)
   })}</div>)
   return (result);
 };

@@ -29,9 +29,9 @@ const Friends = (props) => {
     fetchData()
   }, [props.user])
   console.log(friends)
-  const result = (<div>{friends.map((user, id) => {
+  const result = (<div className="friends-container">{friends.map((user, id) => {
     console.log(user)
-    return (<div onClick={() => router.push(`/?profile=${user.username}`)} key={id}>{user.username}</div>)
+    return (<div className='friend' onClick={() => router.push(`/?profile=${user.username}`)} key={id}>{user.username}</div>)
   })}</div>)
   return (result);
 };

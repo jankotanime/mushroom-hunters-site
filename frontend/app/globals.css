@@ -6,6 +6,7 @@
   --background-lighter: rgb(210, 230, 210);
   --background: rgb(200, 220, 200);
   --background-darker: rgb(180, 200, 180);
+  --background-really-darker: rgb(160, 180, 160);
   --contrast-element: rgb(30, 50, 30);
   --contrast-element-darker: rgb(10, 30, 10);
   --header-height: 50px;
@@ -18,8 +19,12 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: orange;
+    --background-lighter: rgb(50, 70, 50);
+  --background: rgb(30, 50, 30);
+  --background-darker: rgb(10, 30, 10);
+  --background-really-darker: rgb(10, 20, 10);
+  --contrast-element: rgb(140, 160, 140);
+  --contrast-element-darker: rgb(120, 140, 120);
   }
 }
 
@@ -29,12 +34,35 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+}
+
 footer {
   bottom: 0;
   position: fixed;
   width: 100%;
   background-color: darkred;
-  height: var(--footer-height)
+  height: var(--footer-height);
+  text-align: center;
+}
+
+input {
+  background-color: var(--background-lighter);
+  outline: none;
+}
+
+.private-chat-header {
+  background-color: var(--background-really-darker);
+  color: var(--contrast-element-darker);
+  height: 40px;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  box-shadow: 0px 0.5px 2px black; 
 }
 
 .chat {
@@ -56,6 +84,10 @@ footer {
   display: flex;
   flex-direction: row-reverse;
   gap: 10px;
+}
+
+.close-private-chat {
+  right: 0px;
 }
 
 .private-chat {
@@ -114,7 +146,10 @@ footer {
 .user-panel {
   margin-left: var(--global-chat-width);
   margin-top: var(--header-height);
-  padding: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 60px;
+  width: calc(100vw - var(--global-chat-width) - 200px);
 }
 
 .user-panel-header {
@@ -196,10 +231,43 @@ footer {
   white-space: pre-wrap;
 }
 
-.private-chat-scroll {
+.private-chat-messages {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 200px;
+  height: calc(var(--private-chat-height) - 70px);
+}
+
+.private-chat-messages::-webkit-scrollbar {
+  display: none;
+}
+
+.friends-container {
+  width: 100%;
+  background-color: var(--background-lighter);
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 30px;
+}
+
+.friend {
+  background-color: var(--background);
+  width: 200px;
+  height: 80px;
+  margin-bottom: 20px;
+  font-size: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.private-chat-input {
+  width: 100%;
+  height: 30px;
+  background-color: var(--background-lighter);
+  border-top: var(--contrast-element-darker) solid 1px;
 }
 
 .global-chat {
@@ -257,7 +325,7 @@ footer {
 .important-point-login:hover {
   color: var(--contrast-element-darker);
   font-weight: 600;
-} 
+}
 
 .login-button {
   margin: 10px;
@@ -267,4 +335,121 @@ footer {
 
 .error {
   color: red;
+}
+
+.my-profile-header {
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100px;
+  width: 100%;
+  background-color: var(--background-darker);
+}
+
+.my-profile-header-name {
+  display: flex;
+  height: 100%;
+  font-size: 40px;
+  font-weight: 600;
+  justify-content: start;
+  align-items: end;
+}
+
+.profile {
+ width: 100%;
+ height: 100%;
+ background-color: var(--background-lighter);
+}
+
+.post {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  border: solid var(--contrast-element);
+  border-radius: 10px;
+  align-items: center;
+}
+
+.posts-container {
+  padding-top: 40px;
+  gap: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 40px;
+}
+
+.post-image {
+  width: 400px;
+  max-width: 300px;
+  max-height: 400px;
+}
+
+.post-user {
+  font-size: 24px;
+}
+
+.post-content {
+  font-size: 18px;
+  width: 60%;
+  border: 1px solid var(--background-darker);
+  border-radius: 5px;
+}
+
+.post-delete {
+  font-size: 16px;
+}
+
+.post-options {
+  width: 100%;
+  padding-left: 10%;
+  padding-right: 10%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  margin-bottom: 20px;
+  background-color: var(--background);
+  border: 1px solid var(--contrast-element);
+  border-radius: 5px;
+}
+
+.my-profile-options {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.edit-profile-type {
+  gap: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.info-about-logout {
+  font-size: 10px;
+}
+
+.new-post-content {
+  text-align: start;
+  height: 100px;
+  width: 80%;
+  word-wrap: break-word;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.new-post {
+  padding: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  width: 80%;
+  height: 200px;
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  background-color: var(--background);
 }

@@ -95,23 +95,30 @@ const Dashboard = (props) => {
     setNewPostImage(e.target.files[0])
   };
 
-  const result = (<div>
-    <input type="file" accept="image/*" onChange={addImage} />
-    <input
-    type="text"
-    id="post"
-    name="post"
-    value={newPostText}
-    onKeyDown={(e) => {e.key === "Enter" ? newPostTextEnter() : null}}
-    onChange={newPostTextChange}
-    placeholder="O czym myślisz?"
-  />
-    {posts.map((post, id) => {
-    return (<div key={id}>
-      {post.username}: {post.content}
-      {post.img ? <Image src={`https://localhost:8001${post.img}`} alt="Opis obrazu"width={500} height={300}/> : null}
-      </div>)
-  })}</div>)
+  const result = (<div className="profile">
+    <div className="new-post">
+      <input
+        className="new-post-content"
+        type="text"
+        id="post"
+        name="post"
+        value={newPostText}
+        onKeyDown={(e) => {e.key === "Enter" ? newPostTextEnter() : null}}
+        onChange={newPostTextChange}
+        placeholder="Podziel się zdjęciem grzyba..."
+      />
+      <input type="file" accept="image/*" onChange={addImage} />
+    </div>
+    <div className="posts-container">
+          {posts.map((post, id) => {
+          return (<div className='post' key={id}>
+            <div className="post-options">
+              <div className='post-user'>{post.username}</div>
+              <div className='post-content'>{post.content}</div>
+            </div>
+            {post.img ? <Image src={`https://localhost:8001${post.img}`} alt="Opis obrazu" className="post-image" width={300} height={400}/> : null}
+          </div>)
+      })}</div></div>)
   return (result);
 };
 
