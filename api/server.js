@@ -160,6 +160,22 @@ server.post('/api/add-friend', async (req, res) => {
   }
 })
 
+server.delete('/api/delete-friend', async (req, res) => {
+  const { user, profile } = req.body;
+  try {
+    const result = await pool.query(
+      `DELETE FROM friendships WHERE (id_user, id_friend) 
+      IN (SELECT u1.id_user, u2.id_user FROM users u1
+      JOIN users u2 ON (u1.username = $1 AND u2.username = $2)
+      OR (u1.username = $2 AND u2.username = $1));`,
+      [user, profile]
+    );
+    res.status(201).json({msg: 'ok'});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
 server.get('/api/all-users', async (req, res) => {
   const pattern = `%${req.query.pattern}%`;
   try {

@@ -25,6 +25,25 @@ const OtherProfile = (props) => {
       console.log(error)
     }
   }
+  const deleteFriend = async () => {
+    try {
+      const res = await fetch(`https://localhost:8000/api/delete-friend`, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'include',
+        body: JSON.stringify({user: props.user, profile: props.profile}),
+      });
+      if (res.ok) {
+        console.log(res.json())
+        router.push('/');
+      } else {
+        const data = await res.json();
+        console.log(data.error)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const [posts, setPosts] = useState([])
   
     useEffect(() => {
@@ -37,7 +56,7 @@ const OtherProfile = (props) => {
           });
           if (res.ok) {
             const data = await res.json();
-            setPosts(data)
+            setPosts(data.reverse())
             console.log('ok')
           } else {
             console.log('nie ok')
@@ -49,7 +68,12 @@ const OtherProfile = (props) => {
   
       getPosts()
     }, [])
-    const result = (<div>{props.friends.length > 0 ? props.friends.some(friend => friend.username === props.profile) ?  null : <div onClick={addFriend}>Dodaj do znajomych</div> : <div onClick={addFriend}>Dodaj do znajomych</div>}
+    const result = (<div>
+      {props.friends.length > 0 ? 
+      props.friends.some(friend => friend.username === props.profile) ? 
+      <div onClick={deleteFriend}>Usuń ze znajomych</div> : 
+      <div onClick={addFriend}>Dodaj do znajomych</div> : 
+      <div onClick={addFriend}>Dodaj do znajomych</div>}
       {posts.map((post, id) => {
       return (<div key={id}>
             {post.username}: {post.content}

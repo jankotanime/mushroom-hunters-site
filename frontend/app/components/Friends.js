@@ -31,7 +31,7 @@ const Friends = (props) => {
   console.log(friends)
   const result = (<div>{friends.map((user, id) => {
     console.log(user)
-    return (<div key={id}>{user.username}</div>)
+    return (<div onClick={() => router.push(`/?profile=${user.username}`)} key={id}>{user.username}</div>)
   })}</div>)
   return (result);
 };

@@ -5,7 +5,7 @@ const Footer = (props) => {
   const router = useRouter();
   return (
     <footer>
-      footer
+      Jan Gasztold student Informatyki Praktycznej drugiego roku MFI Uniwersytet Gdański 2025
     </footer>
   )
 }

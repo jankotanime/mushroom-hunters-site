@@ -78,7 +78,7 @@ server.get('/mqtt/get-all-posts', async (req, res) => {
 server.get('/mqtt/get-user-posts', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT users.username, posts.content, posts.img FROM posts
+      `SELECT posts.id_post, users.username, posts.content, posts.img FROM posts
       JOIN users ON posts.id_user = users.id_user WHERE users.username = $1`,
       [req.query.user]
     );
@@ -112,19 +112,18 @@ server.post('/mqtt/send-post', upload.single('image'), async (req, res) => {
   }
 })
 
-// ? skad sie to tu wzielo xdddd
-// const addPostToDB = async (user, content) => {
-//   try {
-//     const result = await pool.query(
-//       `INSERT INTO posts (id_user, content)
-//       SELECT id_user, $2 FROM users
-//       WHERE username = $1`, 
-//       [user, content]);
-//     result ? console.log('dodane na bd') : console.log('error') 
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+server.delete('/mqtt/delete-post', async (req, res) => {
+  try{
+    const id = req.body.id;
+    const result = await pool.query(
+      `DELETE FROM posts WHERE id_post = $1`,
+      [id]
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
 
 client.on('connect', () => {
   console.log('Połączono z brokerem MQTT');

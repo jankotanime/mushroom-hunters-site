@@ -71,7 +71,7 @@ const Dashboard = (props) => {
         });
         if (res.ok) {
           const data = await res.json();
-          setPosts(data)
+          setPosts(data.reverse())
           console.log('ok')
         } else {
           console.log('nie ok')

@@ -13,6 +13,7 @@ const MyProfile = (props) => {
   const [editType, setEditType] = useState('username')
   const [deletingProfile, setDeletingProfile] = useState(false)
   const [error, setError] = useState(null)
+  const [sureToDelete, setSureToDelete] = useState(false)
 
   useEffect(() => {
     const getPosts = async () => {
@@ -24,7 +25,7 @@ const MyProfile = (props) => {
         });
         if (res.ok) {
           const data = await res.json();
-          setPosts(data)
+          setPosts(data.reverse())
           console.log('ok')
         } else {
           console.log('nie ok')
@@ -133,6 +134,27 @@ const MyProfile = (props) => {
     return result
   }
 
+  const deletePost = async (post) => {
+    try {
+      const res = await fetch(`https://localhost:8001/mqtt/delete-post`, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'include',
+        body: JSON.stringify({id: post}),
+      });
+      if (res.ok) {
+        window.location.reload()
+      } else {
+        const data = await res.json();
+        console.log(data.error)
+        setError(data.error)
+      }
+    } catch (error) {
+      console.log(error)
+      setError(data.error)
+    }
+  }
+
 
   const result = (<div>{props.user}
   <div onClick={() => {setEditingProfile(!editingProfile); setDeletingProfile(false)}}>Edytuj profil</div>
@@ -141,6 +163,7 @@ const MyProfile = (props) => {
   {error ? error : null}
     {posts.map((post, id) => {
     return (<div key={id}>
+      {sureToDelete ? <div onClick={() => deletePost(post.id_post)}>Sure?</div> : <div onClick={() => setSureToDelete(true)}>Delete post</div>}
       {post.username}: {post.content}
       {post.img ? <Image src={`https://localhost:8001${post.img}`} alt="Opis obrazu"width={500} height={300}/> : null}
       </div>)
