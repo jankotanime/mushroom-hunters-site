@@ -20,7 +20,6 @@ const Register = () => {
     router.push(url)
   }
 
-  // TODO: Poprawić walidację maila i hasła
   const tryRegister = async (e) => {
     e.preventDefault();
     setError('');
@@ -44,7 +43,6 @@ const Register = () => {
           setError(data.error || 'Problem z rejerstracja po stronie serwera');
         }
       } catch (err) {
-        console.log(err)
         setError('Wystąpił błąd. Spróbuj ponownie później.');
       }
     }

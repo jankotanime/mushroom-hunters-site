@@ -58,7 +58,6 @@ const Dashboard = (props) => {
                 setGotNewPost(false)
               }, 250)
             }
-            console.log(posts)
           });
         } else {
           console.log('nie ok')
@@ -79,7 +78,6 @@ const Dashboard = (props) => {
         if (res.ok) {
           const data = await res.json();
           setPosts(data.reverse())
-          console.log('ok')
         } else {
           console.log('nie ok')
         }

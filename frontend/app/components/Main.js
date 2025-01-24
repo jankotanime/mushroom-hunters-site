@@ -81,7 +81,7 @@ const Main = (props) => {
       })}
       </div>
       <div className='user-panel'>
-        {params.get('profile') ? <Profile friends = {[...friends, ...friendsRequests]} profile={params.get('profile')} user = {props.user} /> :
+        {params.get('profile') ? <Profile friends = {friends} friendsRequests = {friendsRequests} profile={params.get('profile')} user = {props.user} /> :
         params.get('search') ? <Search pattern = {params.get('search')} /> : 
         params.get('friend-requests') ? <FriendRequests user = {props.user} /> :
         params.get('friends') ? <Friends user = {props.user} /> : 

@@ -18,7 +18,6 @@ const Search = (props) => {
         if (res.ok) {
           const data = await res.json();
           setAllUsers(data)
-          console.log('ok')
         } else {
           console.log('nie ok')
         }

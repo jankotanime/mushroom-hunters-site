@@ -7,7 +7,6 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-// TODO zmienic nazwe folderu na certs
 const httpsOptions = {
   key: fs.readFileSync('./cerds/server.key'),
   cert: fs.readFileSync('./cerds/server.crt'),

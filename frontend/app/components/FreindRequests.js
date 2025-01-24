@@ -37,7 +37,6 @@ const FriendRequests = (props) => {
         body: JSON.stringify({user: user}),
       });
       if (res.ok) {
-        console.log(res.json())
         window.location.reload();
       } else {
         const data = await res.json();

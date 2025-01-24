@@ -34,7 +34,6 @@ const PanelHeader = (props) => {
   };
 
   const goToMain = () => {
-    console.log(router)
     router.replace(`/`)
   }
 
@@ -59,7 +58,7 @@ const PanelHeader = (props) => {
       id="search"
       name="search"
       value={searchText}
-      onKeyDown={(e) => {e.key === "Enter" ? searchBarEnter() : null}} //&& searchText !== ''
+      onKeyDown={(e) => {e.key === "Enter" ? searchBarEnter() : null}}
       onChange={searchBarChange}
       placeholder="Wyszukaj..."
     />

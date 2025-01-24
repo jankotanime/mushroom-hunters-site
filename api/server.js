@@ -1,7 +1,5 @@
-// ! TODO: Dodać bazę danych do projektu
-
 // ! Aplikacja może nie działać przez dwa różne https. Najprawdopodobniej potrzebne jest wejście w przeglądarce
-// ! na stronę serwera api i website. Dodawanie certyfikatów do przęglądarki nie zawsze jest skuteczne
+// ! na stronę serwera api i website.
 
 import express from 'express';
 import bcrypt from 'bcrypt';
@@ -25,12 +23,12 @@ const options = {
   cert: fs.readFileSync('./certs/server.crt'),
 };
 
-const dataBaseURL = '192.168.0.13' // '10.231.25.216' domowy '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
+const dataBaseURL = '' // ip bazy danych
 
 server.use(cors({
   origin: 'https://localhost:3000',
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  credentials: true, // ? Na przyszłość do ciasteczek
+  credentials: true,
 }));
 
 server.use(express.json());
@@ -57,10 +55,17 @@ const isUserInDB = async (user) => {
 }
 
 const getAllFriendRequests = async (user) => {
-  return pool.query(
-    `SELECT u.username FROM users u JOIN friendships f 
-    ON u.id_user = f.id_user
-    WHERE (f.id_friend = (SELECT id_user FROM users WHERE username = $1 AND status = 'waiting'))`,
+  return pool.query(`WITH target_user AS (
+    SELECT id_user
+    FROM users
+    WHERE username = $1
+    )
+    SELECT DISTINCT u.username
+    FROM users u
+    JOIN friendships f 
+        ON u.id_user = f.id_user OR u.id_user = f.id_friend
+    WHERE (f.id_friend = (SELECT id_user FROM target_user) OR f.id_user = (SELECT id_user FROM target_user))
+      AND f.status = 'waiting' AND u.username != $1;`,
     [user])
 }
 
@@ -100,7 +105,7 @@ server.post('/api/register-user', async (req, res) => {
 });
 
 function generateAuthToken(username) {
-  const secretKey = process.env.JWT_SECRET || 'sektret Victorii'; // ? Może warto to na coś zmienić
+  const secretKey = process.env.JWT_SECRET || 'sektret Victorii';
   const payload = {
     login: username,
   };
@@ -271,7 +276,6 @@ server.delete('/api/logout', verifyAuthToken, async (req, res) => {
 server.patch('/api/update/username', verifyAuthToken, async (req, res) => {
   try {
     const {user, change} = req.body
-    console.log(user, change)
     const result = await pool.query(
       `UPDATE users
       SET username = $2

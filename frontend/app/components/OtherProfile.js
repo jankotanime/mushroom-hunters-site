@@ -15,8 +15,7 @@ const OtherProfile = (props) => {
         body: JSON.stringify({user: props.user, profile: props.profile}),
       });
       if (res.ok) {
-        console.log(res.json())
-        router.push('/');
+        window.location.reload()
       } else {
         const data = await res.json();
         console.log(data.error)
@@ -34,8 +33,7 @@ const OtherProfile = (props) => {
         body: JSON.stringify({user: props.user, profile: props.profile}),
       });
       if (res.ok) {
-        console.log(res.json())
-        router.push('/');
+        window.location.reload()
       } else {
         const data = await res.json();
         console.log(data.error)
@@ -57,7 +55,6 @@ const OtherProfile = (props) => {
           if (res.ok) {
             const data = await res.json();
             setPosts(data.reverse())
-            console.log('ok')
           } else {
             console.log('nie ok')
           }
@@ -72,10 +69,18 @@ const OtherProfile = (props) => {
       <div className="my-profile-header">
       <div className="my-profile-header-name">{props.profile}</div>
       <div className="my-profile-options">
-      {props.friends.length > 0 ? 
-      props.friends.some(friend => friend.username === props.profile) ? 
+      {props.friendsRequests.length > 0 ? 
+      props.friendsRequests.some(friend => friend.username === props.profile) ? 
+      <div>Wysłano zaproszenie do znajomych</div> : 
+      props.friends.length > 0 ?
+      props.friends.some(friend => friend.username === props.profile) ?
       <div onClick={deleteFriend}>Usuń ze znajomych</div> : 
+      <div onClick={addFriend}>Dodaj do znajomych</div> :
       <div onClick={addFriend}>Dodaj do znajomych</div> : 
+      props.friends.length > 0 ?
+      props.friends.some(friend => friend.username === props.profile) ?
+      <div onClick={deleteFriend}>Usuń ze znajomych</div> :
+      <div onClick={addFriend}>Dodaj do znajomych</div> :
       <div onClick={addFriend}>Dodaj do znajomych</div>}
       </div>
       </div>

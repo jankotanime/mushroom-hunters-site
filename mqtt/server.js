@@ -1,5 +1,4 @@
-// ! sudo systemctl restart mosquitto
-// ! mosquitto_pub -h localhost -t user -m 'content'
+// ! włączenie brockera: sudo systemctl restart mosquitto
 
 import express from 'express';
 import pkg from 'pg';
@@ -34,7 +33,7 @@ const options = {
   cert: fs.readFileSync('./certs/server.crt'),
 };
 const httpsServer = https.createServer(options, server)
-const dataBaseURL = '192.168.0.13' // '10.231.25.216' domowy '192.168.0.13' // ? localhost nie dziala przez to ze db na razie jest na windowsie
+const dataBaseURL = '' // ip bazy danych
 const io = new Server(httpsServer, {cors: {
     origin: "https://localhost:3000",
     methods: ["GET", "POST", "PAST", "DELETE"]

@@ -32,7 +32,6 @@ const PrivateChat = (props) => {
   const messageChange = (e) => {
     setMessage(e.target['value'])
   };
-  console.log(props)
   const result = (
   <div className="private-chat">
     <div className="private-chat-header">

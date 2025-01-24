@@ -23,17 +23,15 @@ const messageGlobalQueue = [];
 const messagePrivateQueue = [];
 const messageHistoryQueue = [];
 
-const messageGlobalHistory = [];
+let messageGlobalHistory = [];
 const messagePrivateHistory = {};
 
 setInterval(() => {
-    // ? Global queue for messages
     if (messageGlobalQueue.length > 0) {
         const {user, message} = messageGlobalQueue.shift()
         io.to('global').emit("message_global", user, message);
     }
     
-    // ? Private queue for messages
     if (messagePrivateQueue.length > 0) {
         const {user, roommate, message} = messagePrivateQueue.shift()
         if (io.sockets.adapter.rooms.has(`${roommate}/${user}`)) {
@@ -55,12 +53,11 @@ setInterval(() => {
     }
 }, 1);
 
-function removeOldMessages() {
+
+  setInterval(() => {
     const currentTime = Date.now();
-    messageGlobalHistory.filter(msg => currentTime - msg.lifeTime <= 600000);
-  }
-  
-  setInterval(removeOldMessages, 30000);
+    messageGlobalHistory = messageGlobalHistory.filter((msg) => currentTime - msg.lifeTime <= 300000);
+  }, 30000);
 
 io.sockets.on("connection", (socket) => {
     // ? Socket chatu globalnego
@@ -133,5 +130,3 @@ io.sockets.on("connect_error", () => {
 httpsServer.listen(3001, function () {
     console.log('Serwer HTTP działa na pocie 3001')
 })
-
-// TODO refile kodu, usprawnić go i zoptymalizować

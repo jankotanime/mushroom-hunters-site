@@ -26,7 +26,6 @@ const MyProfile = (props) => {
         if (res.ok) {
           const data = await res.json();
           setPosts(data.reverse())
-          console.log('ok')
         } else {
           console.log('nie ok')
         }
@@ -71,7 +70,6 @@ const MyProfile = (props) => {
         } else {
           const data = await res.json();
           setError(data.error)
-          console.log(data.error)
         }
       } catch (error) {
         console.log(error)
